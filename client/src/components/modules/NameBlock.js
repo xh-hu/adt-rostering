@@ -3,13 +3,20 @@ import React, { useState, useEffect } from "react";
 import "./NameBlock.css";
 
 function NameBlock(props) {
-  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal} = props;
+  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking} = props;
 
   return (
     <div className="nameBlock-container">
-        <div className="nameBlock-auditionNum">
-            {auditionNum}
-        </div>
+        {onDancePage ? 
+            <div className="nameBlock-pref-add">
+                <div>{danceRanking}</div>
+                <button>Add to Dance</button>
+            </div>
+            :
+            <div className="nameBlock-auditionNum">
+                {auditionNum}
+            </div>
+        }
         <div className="nameBlock-name">
             {firstname + (nickname !== "" ? " (" + nickname + ") " : " ") + lastname}
         </div>

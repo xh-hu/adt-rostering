@@ -6,7 +6,7 @@
   max-width: 90vw;
   height: 60px;
   display: grid;
-  grid-template-columns: repeat(6, 15vw);
+  grid-template-columns: 18vw repeat(5, 12vw);
   margin-left: 5vw;
   font-weight: 400;
 }

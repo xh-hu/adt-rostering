@@ -1,13 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import "./NameBlock.css";
 
 function NameBlock(props) {
-  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances} = props;
-
-  function showModal() {
-
-  }
+  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal} = props;
 
   return (
     <div className="nameBlock-container">
@@ -21,7 +17,7 @@ function NameBlock(props) {
             {year}
         </div>
         <div className="nameBlock-prefs">
-            <button>View Prefs</button>
+            <button onClick={() => toggleModal(auditionNum)}>View Prefs</button>
         </div>
         <div className="nameBlock-numDancesRequested">
             {rosteredDances.length}/{numDances}

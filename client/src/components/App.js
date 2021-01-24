@@ -6,11 +6,15 @@ import Login from "./pages/Login.js";
 import Dance from "./pages/Dance.js";
 import Admin from "./pages/Admin.js";
 import FullRoster from "./pages/FullRoster.js";
+import GoogleLogin, { GoogleLogout } from "react-google-login";
 
 import "../utilities.css";
 import "./App.css";
 
+const GOOGLE_CLIENT_ID = "294124002149-o7997gqc9vm3mtq4g78esqli73kvols5.apps.googleusercontent.com";
+
 function App(props) {
+  const [googleId, setGoogleId] = useState(null);
   const [allDancers, setAllDancers] = useState([]);
   const [modalOpen, toggleModalState] = useState(false);
   const [displayedDancer, setDancer] = useState(null);
@@ -19,14 +23,28 @@ function App(props) {
   useEffect(()=> {
     async function getData() {
         get("/api/allDancers").then((data) => {
-            console.log(data);
             setAllDancers(data);
         });
     }
-    if (allDancers.length == 0) {
+    if (allDancers.length == 0 && googleId) {
         getData();
     }
-  }, [allDancers]);
+  }, [allDancers, googleId]);
+
+  function handleLogin(res) {
+    const userToken = res.tokenObj.id_token;
+    post("/api/login", { token: userToken }).then((user) => {
+      get("/api/validChoreog", { googleid: res.profileObj.googleId, gmail: res.profileObj.email }).then((result) => {
+        setGoogleId(res.profileObj.email);
+        console.log("Welcome choreographer " + res.profileObj.name);
+      })
+    });
+  };
+
+  function handleLogout() {
+    setGoogleId(null);
+    post("/api/logout");
+  };
 
   function toggleModal(auditionNum) {
     if (modalOpen) {
@@ -41,7 +59,6 @@ function App(props) {
           let tempPrefs = [];
           if (dancer.auditionNum == auditionNum) {
               setDancer(dancer.firstName);
-              console.log(dancer.firstName);
               tempPrefs = [
                   [0, dancer.dance_0],
                   [1, dancer.dance_1],
@@ -84,7 +101,6 @@ function App(props) {
           let tempPrefs = [];
           if (dancer.auditionNum == auditionNum) {
               setDancer(dancer.firstName);
-              console.log(dancer.firstName);
               tempPrefs = [
                   [0, dancer.dance_0],
                   [1, dancer.dance_1],
@@ -117,23 +133,42 @@ function App(props) {
 
     return (
       <div className="appContainer">
-        <Router>
-          <Login path="/" />
-          <Dance path="/dance"
-            allDancers={allDancers}
-            displayedDancer={displayedDancer}
-            displayedPrefs={displayedPrefs}
-            toggleModal={toggleModal} />
-          <FullRoster 
-            path="/roster"
-            allDancers={allDancers}
-            displayedDancer={displayedDancer}
-            displayedPrefs={displayedPrefs}
-            toggleModal={toggleModal}
-          /> 
-          <Admin path="/admin" />
-          <NotFound default />
-        </Router>
+        {googleId ? (
+          <>
+            <GoogleLogout
+              clientId={GOOGLE_CLIENT_ID}
+              buttonText="Logout"
+              onLogoutSuccess={handleLogout}
+              onFailure={(err) => console.log(err)}
+              className="NavBar-link NavBar-login"
+            />
+            <Router>
+            <FullRoster 
+              path="/"
+              allDancers={allDancers}
+              displayedDancer={displayedDancer}
+              displayedPrefs={displayedPrefs}
+              toggleModal={toggleModal}
+            /> 
+            <Dance path="/dance"
+              allDancers={allDancers}
+              displayedDancer={displayedDancer}
+              displayedPrefs={displayedPrefs}
+              toggleModal={toggleModal} />
+            
+            <Admin path="/admin" />
+            <NotFound default />
+          </Router>
+        </>
+          ) : (
+            <GoogleLogin
+              clientId={GOOGLE_CLIENT_ID}
+              buttonText="Login"
+              onSuccess={handleLogin}
+              onFailure={(err) => console.log(err)}
+              className="NavBar-link NavBar-login"
+            />
+          )}
       </div>
     );
 }

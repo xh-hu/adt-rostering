@@ -24,6 +24,10 @@
   font-weight: 400;
 }
 
+.nameBlock-pref-add button:hover {
+  cursor: pointer;
+}
+
 .nameBlock-name {
   overflow-x: wrap;
   margin-right: 20px;

@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap");
+
+.nameBlock-container {
+  max-width: 90vw;
+  height: 60px;
+  display: grid;
+  grid-template-columns: repeat(6, 15vw);
+  margin-left: 5vw;
+}
+
+.nameBlock-auditionNum {
+  overflow-x: hidden;
+  margin-right: 20px;
+}
+
+.nameBlock-name {
+  overflow-x: wrap;
+  margin-right: 20px;
+}
+
+.nameBlock-prefs button {
+  border: 1px dotted black;
+  background-color: white;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 100;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: -5px;
+}
+
+.nameBlock-prefs button:hover {
+  cursor: pointer;
+}
+
+.nameBlock-numDancesRequested {
+  padding-left: 0.5vw;
+}

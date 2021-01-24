@@ -1,0 +1,8 @@
+.FullRoster-header {
+  max-width: 90vw;
+  height: 60px;
+  display: grid;
+  grid-template-columns: repeat(6, 15vw);
+  margin-left: 5vw;
+  font-weight: 400;
+}

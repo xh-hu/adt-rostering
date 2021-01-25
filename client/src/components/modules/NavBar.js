@@ -4,7 +4,7 @@ import { Link } from "@reach/router";
 import GoogleLogin, { GoogleLogout } from "react-google-login";
 
 
-const GOOGLE_CLIENT_ID = "294124002149-o7997gqc9vm3mtq4g78esqli73kvols5.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "7112847294-5v026crn1ac038njg41v8a4e6obaeaae.apps.googleusercontent.com";
 
 
 function NavBar(props) {

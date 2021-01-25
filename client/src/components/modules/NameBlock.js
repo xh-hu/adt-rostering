@@ -5,6 +5,10 @@ import "./NameBlock.css";
 function NameBlock(props) {
   const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
 
+  useEffect(() => {
+    console.log(rosteredDances);
+  }, [rosteredDances])
+
   return (
     <div className="nameBlock-container">
         {onDancePage ? 
@@ -39,9 +43,7 @@ function NameBlock(props) {
         </div>
         <div className="nameBlock-rosteredDancesContainer">
             {rosteredDances.map((dance) => 
-                <div>
-                    {dance}
-                </div>
+                dance + " "
             )}
         </div>
     </div>

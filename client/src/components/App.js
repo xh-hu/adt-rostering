@@ -52,6 +52,14 @@ function App(props) {
     if (allDancers.length == 0 && googleId) {
         getData();
     }
+    else {
+      get("/api/whoami").then((user) => {
+        if (user.email) {
+          // they are registed in the database, and currently logged in.
+          setGoogleId(user.email);
+        }
+      });
+    }
   }, [allDancers, googleId]);
 
   function handleLogin(res) {

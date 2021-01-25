@@ -55,34 +55,53 @@ router.post("/initsocket", (req, res) => {
   res.send({});
 });
 
-router.get("/allDancers", (req, res) => {
+router.get("/allDancers", auth.ensureLoggedIn, (req, res) => {
   Dancer.find({}).then((dancers) => {
     res.send(dancers);
   });
 })
 
-router.post("/addToDance", (req, res) => {
-  Dance.find({ danceId: req.body.danceId }).then((dance) => {
-    if (dance.length === 0) {
-      const newDance = new Dance({
-        danceName: req.body.danceName,
-        danceId: req.body.danceId,
-        members: [req.body.dancer],
+router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
+  Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
+    if (dancer.rosteredDances) {
+      console.log("dance does not exist, dancer rosteredDances exists");
+      Dancer.updateOne(
+        { auditionNum: req.body.dancer.auditionNum},
+        { $push: {rosteredDances: req.body.danceName}}
+      ).then(() => {
+        Dance.find({ danceId: req.body.danceId }).then((dance) => {
+          Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((updatedDancer) => {
+            if (dance.length === 0) {
+              const newDance = new Dance({
+                danceName: req.body.danceName,
+                danceId: req.body.danceId,
+                members: [updatedDancer],
+              });
+              newDance.save().then(() => res.send({}));
+            }
+            else {
+              Dance.updateOne(
+                { danceId: req.body.danceId },
+                { $push: {members: updatedDancer} }
+                ).then(() => res.send({}));
+            }
+          })
+        })
+
       });
-      newDance.save().then(() => {
-        res.send({});
-      })
     }
     else {
-      Dance.updateOne(
-        { danceId: req.body.danceId },
-        { $push: {members: req.body.dancer} }
-        ).then(() => res.send({}));
+      console.log("nothing exists");
+      Dancer.updateOne(
+        { auditionNum: req.body.dancer.auditionNum},
+        { $set: {rosteredDances: [req.body.danceName]}}
+      ).then(() => res.send({}));
     }
-  })
+  });
+  
 })
 
-router.post("/removeFromDance", (req, res) => {
+router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
   Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
       const tempList = dance.members.slice();
       let ind = -1;
@@ -96,16 +115,37 @@ router.post("/removeFromDance", (req, res) => {
         Dance.updateOne(
           { danceId: req.body.danceId },
           { $set: {members: tempList }}
-          ).then(() => res.send({}));
+          ).then(() => {
+            Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
+              let ind = -1;
+              for (var i = 0; i < dancer.rosteredDances.length; i++) {
+                if (dancer.rosteredDances[i] == req.body.danceName) {
+                  ind = i;
+                  break;
+                }
+                tempList = dancer.rosteredDances.slice();
+                tempList.splice(ind, 1);
+                Dancer.updateOne(
+                  { auditionNum: req.body.dancer.auditionNum},
+                  { $set: {rosteredDances: tempList}}
+                ).then(() => res.send({}));
+              }
+            });
+          });
       }
     });
+  
 })
 
-router.get("/getDance", (req, res) => {
-  console.log("what?")
+router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
   Dance.findOne({ danceId: req.query.danceId }).then((dance) => {
-    console.log(dance);
-    res.send(dance.members);
+    if (dance) {
+      res.send(dance.members);
+    }
+    else {
+      res.send([]);
+    }
+    
   })
 })
 

@@ -27,7 +27,7 @@ function FullRoster(props) {
                 year={dancer.year}
                 auditionNum={dancer.auditionNum}
                 numDances={dancer.numDances}
-                rosteredDances={[]}
+                rosteredDances={dancer.rosteredDances}
                 comments={dancer.comments}
                 toggleModal={toggleModal}
             />

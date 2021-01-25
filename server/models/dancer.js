@@ -27,7 +27,8 @@ const DancerSchema = new mongoose.Schema({
   dance_15: Number,
   dance_16: Number,
   dance_17: Number,
-  comments: String
+  comments: String,
+  rosteredDances: Array,
 });
 
 // compile model from schema

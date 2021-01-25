@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NameBlock from "../modules/NameBlock.js";
+import PrefModal from "../modules/PrefModal.js";
 import { get, post } from "../../utilities.js";
 
 import "./Dance.css";
@@ -121,20 +122,12 @@ function Dance(props) {
         ) : null}
       
       {displayedDancer ? 
-      <>
-      <div className="FullRoster-prefModalBackground">
-      </div>
-      <div className="FullRoster-prefModal">
-        <b>Prefs for {displayedDancer}</b>
-        <hr></hr>
-        {displayedPrefs.map((pref) => 
-            <div>
-                {pref[1]}: Dance {pref[0]}
-            </div>
-        )}
-        <button onClick={toggleModal}>Close</button>
-      </div>
-      </>
+      <PrefModal
+        displayedDancer={displayedDancer}
+        displayedPrefs={displayedPrefs}
+        toggleModal={toggleModal}
+        comments={displayedDancer.comments}
+      />
       : null}
     </div>
     </>

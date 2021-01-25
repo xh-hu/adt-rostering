@@ -89,7 +89,7 @@ function App(props) {
           const dancer = allDancers[i];
           let tempPrefs = [];
           if (dancer.auditionNum == auditionNum) {
-              setDancer(dancer.firstName);
+              setDancer(dancer);
               tempPrefs = [
                   [0, dancer.dance_0],
                   [1, dancer.dance_1],

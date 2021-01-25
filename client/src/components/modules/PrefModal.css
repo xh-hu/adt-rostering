@@ -1,0 +1,54 @@
+.PrefModal-prefModalBackground {
+  position: fixed;
+  width: 100vw;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgb(25, 25, 28);
+  opacity: 20%;
+  z-index: 5;
+}
+
+.PrefModal-prefModal {
+  position: fixed;
+  width: 30vw;
+  height: fit-content;
+  background-color: white;
+  z-index: 10;
+  opacity: 100%;
+  top: 20vh;
+  left: 35vw;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid gray;
+}
+
+.PrefModal-contentArea {
+  display: flex;
+  justify-content: left;
+  gap: 20%;
+}
+
+.PrefModal-prefs {
+  width: fit-content;
+}
+
+.PrefModal-comments {
+  max-width: 40%;
+  overflow-x: wrap;
+  overflow-y: scroll;
+}
+
+.PrefModal-prefModal button {
+  border: 1px dotted black;
+  background-color: white;
+  border-radius: 10px;
+  padding: 5px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+
+.PrefModal-prefModal button:hover {
+  cursor: pointer;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { get, post } from "../../utilities.js";
 import NameBlock from "../modules/NameBlock.js";
 import PrefModal from "../modules/PrefModal.js";
@@ -7,6 +7,8 @@ import "./FullRoster.css";
 
 function FullRoster(props) {
   const { allDancers, displayedDancer, displayedPrefs, toggleModal } = props;
+  
+
 
   return (
     <div className="FullRoster-container">

@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Router } from "@reach/router";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { Router, Location } from "@reach/router";
 import { get, post } from "../utilities.js";
 import NotFound from "./pages/NotFound.js";
-import Login from "./pages/Login.js";
+import NavBar from "./modules/NavBar.js";
 import Dance from "./pages/Dance.js";
 import Admin from "./pages/Admin.js";
 import FullRoster from "./pages/FullRoster.js";
-import GoogleLogin, { GoogleLogout } from "react-google-login";
 
 import "../utilities.css";
 import "./App.css";
 
-const GOOGLE_CLIENT_ID = "294124002149-o7997gqc9vm3mtq4g78esqli73kvols5.apps.googleusercontent.com";
+import OnRouteChangeWorker from "./OnRouteChangeWorker.js";
+
+const OnRouteChange = ( { action } ) => (
+  <Location>
+    {({ location }) => <OnRouteChangeWorker location={location} action={action} />}
+  </Location>
+)
+
 
 function App(props) {
   const [googleId, setGoogleId] = useState(null);
@@ -21,6 +27,12 @@ function App(props) {
   const [displayedPrefs, setPrefs] = useState([]);
   const [myDancers, setMyDancers] = useState(null);
   const [notMyDancers, setNotMyDancers] = useState(null);
+
+
+  useLayoutEffect(() => {
+    console.log(window.location.pathname)
+    window.scrollTo(0, 0);
+  }, [window.location.pathname]);
 
   useEffect(()=> {
     async function getData() {
@@ -122,16 +134,16 @@ function App(props) {
 
 
     return (
+      <>
+      
+      <NavBar 
+        googleId={googleId}
+        handleLogin={handleLogin}
+        handleLogout={handleLogout}
+      />
       <div className="appContainer">
         {googleId ? (
           <>
-            <GoogleLogout
-              clientId={GOOGLE_CLIENT_ID}
-              buttonText="Logout"
-              onLogoutSuccess={handleLogout}
-              onFailure={(err) => console.log(err)}
-              className="NavBar-link NavBar-login"
-            />
             <Router>
             <FullRoster 
               path="/"
@@ -150,18 +162,15 @@ function App(props) {
             : null} 
             <Admin path="/admin" />
             <NotFound default />
-          </Router>
+            </Router>
+            <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
         </>
           ) : (
-            <GoogleLogin
-              clientId={GOOGLE_CLIENT_ID}
-              buttonText="Login"
-              onSuccess={handleLogin}
-              onFailure={(err) => console.log(err)}
-              className="NavBar-link NavBar-login"
-            />
+            null
           )}
       </div>
+      
+      </>
     );
 }
 

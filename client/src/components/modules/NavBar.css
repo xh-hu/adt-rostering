@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap");
+
+.NavBar-container {
+  position: absolute;
+  font-family: "Roboto Mono", monospace;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 100vw;
+  padding: 20px;
+  background-color: rgb(99, 24, 24);
+}
+
+.NavBar-login {
+  position: absolute;
+  right: 100px;
+  opacity: 100%;
+  z-index: 10;
+}
+
+.NavBar-link {
+  padding-left: 10px;
+  padding-right: 30px;
+  color: white;
+  text-decoration: none;
+  font-size: 25px;
+}

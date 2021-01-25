@@ -6,7 +6,6 @@ function NameBlock(props) {
   const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
 
   useEffect(() => {
-    console.log(rosteredDances);
   }, [rosteredDances])
 
   return (

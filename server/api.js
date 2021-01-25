@@ -102,39 +102,41 @@ router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
 })
 
 router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
-  Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
-      const tempList = dance.members.slice();
-      let ind = -1;
-      for (var i = 0; i < tempList.length; i++) {
-        if (tempList[i].auditionNum == req.body.dancer.auditionNum) {
-          ind = i;
+  Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
+    let ind = -1;
+    for (var i = 0; i < dancer.rosteredDances.length; i++) {
+      if (dancer.rosteredDances[i] === req.body.danceName) {
+        ind = i;
+        console.log(ind);
+        break;
+      }
+    }
+    const tempList = dancer.rosteredDances.slice();
+    tempList.splice(ind, 1);
+    Dancer.updateOne(
+      { auditionNum: req.body.dancer.auditionNum},
+      { $set: {rosteredDances: tempList}}
+    ).then(() => {
+      Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
+        const tempMembers = dance.members.slice();
+        let ind = -1;
+        for (var i = 0; i < tempMembers.length; i++) {
+          if (tempMembers[i].auditionNum == req.body.dancer.auditionNum) {
+            ind = i;
+          }
         }
-      }
-      if (ind !== -1) {
-        tempList.splice(ind, 1);
-        Dance.updateOne(
-          { danceId: req.body.danceId },
-          { $set: {members: tempList }}
-          ).then(() => {
-            Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
-              let ind = -1;
-              for (var i = 0; i < dancer.rosteredDances.length; i++) {
-                if (dancer.rosteredDances[i] == req.body.danceName) {
-                  ind = i;
-                  break;
-                }
-                tempList = dancer.rosteredDances.slice();
-                tempList.splice(ind, 1);
-                Dancer.updateOne(
-                  { auditionNum: req.body.dancer.auditionNum},
-                  { $set: {rosteredDances: tempList}}
-                ).then(() => res.send({}));
-              }
+        if (ind !== -1) {
+          tempMembers.splice(ind, 1);
+          Dance.updateOne(
+            { danceId: req.body.danceId },
+            { $set: {members: tempMembers }}
+            ).then(() => {
+              res.send({});
             });
-          });
-      }
+        }
+      });
     });
-  
+  });
 })
 
 router.get("/getDance", auth.ensureLoggedIn, (req, res) => {

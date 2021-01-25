@@ -32,14 +32,16 @@ function Dance(props) {
         addingDancer = dancerList[i];
       }
     }
-    post("/api/addToDance", {danceId: 1, danceName: "dance_1", dancer: addingDancer}).then((dancer) => {
-      setRosteredList([ ... rosteredList, addingDancer]);
-      const ind = dancerList.indexOf(addingDancer);
-      if (ind !== -1) {
-        const tempList = dancerList.slice();
-        tempList.splice(ind, 1);
-        setDancerList(tempList);      
-      }
+    post("/api/addToDance", {danceId: 1, danceName: "dance_1", dancer: addingDancer}).then((f) => {
+      get("/api/getDancer", {dancerAuditionNum: auditionNum}).then((dancer) => {
+        setRosteredList([ ... rosteredList, dancer]);
+        const ind = dancerList.indexOf(addingDancer);
+        if (ind !== -1) {
+          const tempList = dancerList.slice();
+          tempList.splice(ind, 1);
+          setDancerList(tempList);      
+        }
+      })
     });
   }
 
@@ -50,19 +52,21 @@ function Dance(props) {
         removingDancer = rosteredList[i];
       }
     }
-    post("/api/removeFromDance", {danceId: 1, danceName: "dance_1", dancer: removingDancer}).then((dancer) => {
-      const tempDancerList = [ ... dancerList, removingDancer];
-      tempDancerList.sort(function(a, b) {
-        //HARDCODED TO DANCE 1
-        return a.dance_1 - b.dance_1;
+    post("/api/removeFromDance", {danceId: 1, danceName: "dance_1", dancer: removingDancer}).then((f) => {
+      get("/api/getDancer", {dancerAuditionNum: auditionNum}).then((dancer) => {
+        const tempDancerList = [ ... dancerList, dancer];
+        tempDancerList.sort(function(a, b) {
+          //HARDCODED TO DANCE 1
+          return a.dance_1 - b.dance_1;
+        })
+        setDancerList(tempDancerList);
+        const ind = rosteredList.indexOf(removingDancer);
+        if (ind !== -1) {
+          const tempList = rosteredList.slice();
+          tempList.splice(ind, 1);
+          setRosteredList(tempList);      
+        }
       })
-      setDancerList(tempDancerList);
-      const ind = rosteredList.indexOf(removingDancer);
-      if (ind !== -1) {
-        const tempList = rosteredList.slice();
-        tempList.splice(ind, 1);
-        setRosteredList(tempList);      
-      }
     });
   }
 

@@ -33,6 +33,7 @@
   left: 35vw;
   padding: 20px;
   border-radius: 20px;
+  border: 1px solid gray;
 }
 
 .FullRoster-prefModal button {

@@ -22,6 +22,7 @@ const auth = require("./auth");
 const router = express.Router();
 
 const socketManager = require("./server-socket");
+const dancer = require("./models/dancer");
 
 
 router.post("/login", auth.login);
@@ -148,7 +149,19 @@ router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
       res.send([]);
     }
     
-  })
+  });
+})
+
+router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
+  dancer.findOne({ auditionNum: req.query.dancerAuditionNum }).then((dancer) => {
+    if (dancer) {
+      res.send(dancer);
+    }
+    else {
+      res.send(null);
+    }
+    
+  });
 })
 
 // |------------------------------|

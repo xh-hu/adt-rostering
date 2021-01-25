@@ -3,15 +3,23 @@ import React, { useState, useEffect } from "react";
 import "./NameBlock.css";
 
 function NameBlock(props) {
-  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking} = props;
+  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
 
   return (
     <div className="nameBlock-container">
         {onDancePage ? 
+            <>
+            { addFunction ? 
             <div className="nameBlock-pref-add">
                 <div>{danceRanking}</div>
-                <button>Add to Dance</button>
+                <button onClick={() => addFunction(auditionNum)}>Add to Dance</button>
+            </div>: 
+            <div className="nameBlock-pref-add">
+                <div>{danceRanking}</div>
+                <button onClick={() => removeFunction(auditionNum)}>Remove from Dance</button>
             </div>
+            }
+            </>
             :
             <div className="nameBlock-auditionNum">
                 {auditionNum}

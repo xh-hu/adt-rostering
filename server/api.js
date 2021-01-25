@@ -13,6 +13,7 @@ const express = require("express");
 const Dancer = require("./models/dancer");
 const Choreog = require("./models/choreog");
 const User = require("./models/user");
+const Dance = require("./models/dance");
 
 // import authentication library
 const auth = require("./auth");
@@ -58,6 +59,54 @@ router.get("/allDancers", (req, res) => {
   Dancer.find({}).then((dancers) => {
     res.send(dancers);
   });
+})
+
+router.post("/addToDance", (req, res) => {
+  Dance.find({ danceId: req.body.danceId }).then((dance) => {
+    if (dance.length === 0) {
+      const newDance = new Dance({
+        danceName: req.body.danceName,
+        danceId: req.body.danceId,
+        members: [req.body.dancer],
+      });
+      newDance.save().then(() => {
+        res.send({});
+      })
+    }
+    else {
+      Dance.updateOne(
+        { danceId: req.body.danceId },
+        { $push: {members: req.body.dancer} }
+        ).then(() => res.send({}));
+    }
+  })
+})
+
+router.post("/removeFromDance", (req, res) => {
+  Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
+      const tempList = dance.members.slice();
+      let ind = -1;
+      for (var i = 0; i < tempList.length; i++) {
+        if (tempList[i].auditionNum == req.body.dancer.auditionNum) {
+          ind = i;
+        }
+      }
+      if (ind !== -1) {
+        tempList.splice(ind, 1);
+        Dance.updateOne(
+          { danceId: req.body.danceId },
+          { $set: {members: tempList }}
+          ).then(() => res.send({}));
+      }
+    });
+})
+
+router.get("/getDance", (req, res) => {
+  console.log("what?")
+  Dance.findOne({ danceId: req.query.danceId }).then((dance) => {
+    console.log(dance);
+    res.send(dance.members);
+  })
 })
 
 // |------------------------------|

@@ -2,7 +2,9 @@
 
 .nameBlock-container {
   max-width: 90vw;
-  height: 80px;
+  height: fit-content;
+  padding-top: 20px;
+  padding-bottom: 20px;
   display: grid;
   grid-template-columns: 18vw repeat(5, 12vw);
   margin-left: 5vw;

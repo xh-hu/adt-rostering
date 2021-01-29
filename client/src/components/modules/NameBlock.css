@@ -10,6 +10,20 @@
   margin-left: 5vw;
 }
 
+.nameBlock-container button {
+  border: 1px solid grey;
+  background-color: rgba(247, 247, 247, 0.084);
+  font-family: "Roboto Mono", monospace;
+  font-weight: 100;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: -5px;
+  width: fit-content;
+  height: fit-content;
+  color: rgb(242, 242, 242);
+  box-shadow: 0.5px 0.5px 2px 0.5px inset grey;
+}
+
 .nameBlock-auditionNum {
   overflow-x: hidden;
   margin-right: 20px;
@@ -19,36 +33,58 @@
   display: grid;
   grid-template-columns: 1fr 4fr;
   margin-right: 30px;
-  font-weight: 400;
+  font-weight: 100;
 }
 
 .nameBlock-pref-add button {
+  border: 1px solid rgba(2, 154, 2, 0.66);
+  background-color: rgba(2, 154, 2, 0.283);
   font-weight: 400;
+  box-shadow: 0.5px 0.5px 2px 0.5px inset rgba(2, 154, 2, 0.66);
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
 }
 
 .nameBlock-pref-add button:hover {
   cursor: pointer;
+  background-color: rgba(2, 154, 2, 0.66);
+  color: white;
+}
+
+.nameBlock-pref-remove {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  margin-right: 30px;
+  font-weight: 400;
+}
+
+.nameBlock-pref-remove button {
+  border: 1px solid rgba(213, 0, 0, 0.598);
+  background-color: rgba(213, 0, 0, 0.276);
+  font-weight: 400;
+  box-shadow: 0.5px 0.5px 2px 0px inset rgba(213, 0, 0, 0.598);
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+.nameBlock-pref-remove button:hover {
+  cursor: pointer;
+  background-color: rgba(213, 0, 0, 0.598);
+  color: white;
 }
 
 .nameBlock-name {
   overflow-x: wrap;
   margin-right: 20px;
+  font-weight: 400;
 }
 
-.nameBlock-container button {
-  border: 1px dotted black;
-  background-color: white;
-  font-family: "Roboto Mono", monospace;
-  font-weight: 100;
-  border-radius: 10px;
-  padding: 5px;
-  margin-top: -5px;
-  width: fit-content;
-  height: fit-content;
+.nameBlock-prefs button {
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
 }
 
 .nameBlock-prefs button:hover {
   cursor: pointer;
+  background-color: grey;
+  color: white;
 }
 
 .nameBlock-numDancesRequested {

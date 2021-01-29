@@ -21,14 +21,16 @@ function FullRoster(props) {
           <div>Quota</div>
           <div>Rostered Dances</div>
       </div>
-      {allDancers.length !== 0 ? 
-        allDancers.map((dancer) => 
-            <NameBlock
-                dancer={dancer}
-                toggleModal={toggleModal}
-            />
-        ) : null
-      }
+      <div className="FullRoster-dancerBlock">
+        {allDancers.length !== 0 ? 
+          allDancers.map((dancer) => 
+              <NameBlock
+                  dancer={dancer}
+                  toggleModal={toggleModal}
+              />
+          ) : null
+        }
+      </div>
       {displayedDancer ? 
       <PrefModal
         displayedDancer={displayedDancer}

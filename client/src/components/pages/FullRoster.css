@@ -1,5 +1,12 @@
 .FullRoster-container {
   height: 100%;
+  width: 100vw;
+  color: rgb(235, 235, 235);
+}
+
+.FullRoster-dancerBlock {
+  width: 90vw;
+  margin-left: 5vw;
 }
 
 .FullRoster-header {
@@ -7,7 +14,7 @@
   height: 60px;
   display: grid;
   grid-template-columns: 18vw repeat(5, 12vw);
-  margin-left: 5vw;
+  margin-left: 10vw;
   font-weight: 400;
 }
 
@@ -17,5 +24,6 @@
   text-align: center;
   margin-bottom: 30px;
   margin-top: 30px;
-  font-weight: 700;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgb(99, 24, 24);
 }

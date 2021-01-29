@@ -1,11 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap");
+
 .PrefModal-prefModalBackground {
   position: fixed;
   width: 100vw;
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgb(25, 25, 28);
-  opacity: 20%;
+  background-color: rgb(23, 23, 23);
+  opacity: 60%;
   z-index: 5;
 }
 
@@ -21,6 +23,8 @@
   padding: 20px;
   border-radius: 20px;
   border: 1px solid gray;
+  color: black;
+  box-shadow: 1px 1px 3px 1px grey;
 }
 
 .PrefModal-contentArea {
@@ -40,15 +44,20 @@
 }
 
 .PrefModal-prefModal button {
-  border: 1px dotted black;
+  border: 1px solid grey;
   background-color: white;
   border-radius: 10px;
   padding: 5px;
+  font-family: "Roboto Mono", monospace;
   position: absolute;
   right: 20px;
   bottom: 20px;
+  box-shadow: 0.5px 0.5px 2px 0.5px grey;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
 }
 
 .PrefModal-prefModal button:hover {
   cursor: pointer;
+  background-color: gray;
+  color: white;
 }

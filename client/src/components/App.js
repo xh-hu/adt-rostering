@@ -7,6 +7,8 @@ import Dance from "./pages/Dance.js";
 import Admin from "./pages/Admin.js";
 import FullRoster from "./pages/FullRoster.js";
 
+import logo from "../public/adt_rectangle_logo.png";
+
 import "../utilities.css";
 import "./App.css";
 
@@ -165,7 +167,9 @@ function App(props) {
             <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
         </>
           ) : (
-            null
+            <div className="App-logo-container">
+              <img className="App-logo" src={logo} />
+            </div>
           )}
       </div>
       

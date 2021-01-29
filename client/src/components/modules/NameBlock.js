@@ -14,7 +14,7 @@ function NameBlock(props) {
                 <div>{danceRanking}</div>
                 <button onClick={() => addFunction(dancer)}>Add to Dance</button>
             </div>: 
-            <div className="nameBlock-pref-add">
+            <div className="nameBlock-pref-remove">
                 <div>{danceRanking}</div>
                 <button onClick={() => removeFunction(dancer)}>Remove from Dance</button>
             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import NameBlock from "../modules/NameBlock.js";
 import PrefModal from "../modules/PrefModal.js";
 import { get, post } from "../../utilities.js";
+import { navigate } from "@reach/router";
 
 import "./Dance.css";
 
@@ -20,6 +21,9 @@ function Dance(props) {
         })
         setDancerList(tempDancerList);
         setRosteredList(myDancers);
+    }
+    else {
+      navigate("/");
     }
   }, [notMyDancers]);
 

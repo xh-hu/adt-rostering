@@ -7,19 +7,34 @@ import GoogleLogin, { GoogleLogout } from "react-google-login";
 const GOOGLE_CLIENT_ID = "7112847294-5v026crn1ac038njg41v8a4e6obaeaae.apps.googleusercontent.com";
 
 
+
 function NavBar(props) {
   const {googleId, handleLogin, handleLogout} = props;
+  
+  const [pathName, setPathName] = useState("/");
+
+  const isActive = () => {
+    setPathName(window.location.pathname);
+  }
 
   return (
     <div className="NavBar-container">
         {googleId ? 
         <>
-            <Link to="/" className="NavBar-link">
-                Roster
-            </Link>
-            <Link to="/dance" className="NavBar-link">
-                My Dance
-            </Link>
+            <div className="NavBar-linksContainer">
+              <div className="NavBar-linkBlock">
+                <Link getProps={isActive} to="/" className="NavBar-link">
+                    Roster
+                </Link>
+                <div>{pathName === "/" ? "^" : null}</div>
+              </div>
+              <div className="NavBar-linkBlock">
+                <Link getProps={isActive} to="/dance" className="NavBar-link">
+                    My Dance
+                </Link>
+                <div>{pathName === "/dance" ? "^" : null}</div>
+              </div>
+            </div>
             <GoogleLogout
                 clientId={GOOGLE_CLIENT_ID}
                 buttonText="Logout"

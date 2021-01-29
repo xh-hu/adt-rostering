@@ -32,7 +32,7 @@ router.get('/validChoreog', (req, res) => {
   Choreog.find({ gmail: req.query.gmail}).then((choreog) => {
     User.findOne({ googleid: req.query.googleid }).then((user) => {
       if (choreog.length !== 0 && user) {
-        if (user.email == req.query.gmail) res.send({});
+        if (user.email == req.query.gmail) res.send(choreog[0]);
       }
       else {
         res.status(401).send({ msg: "Unauthorized, not a choreographer :(" });
@@ -63,15 +63,15 @@ router.get("/allDancers", auth.ensureLoggedIn, (req, res) => {
 })
 
 router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
-  Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
+  Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
     if (dancer.rosteredDances) {
       console.log("dance does not exist, dancer rosteredDances exists");
       Dancer.updateOne(
-        { auditionNum: req.body.dancer.auditionNum},
+        { _id: req.body.dancer._id},
         { $push: {rosteredDances: req.body.danceName}}
       ).then(() => {
         Dance.find({ danceId: req.body.danceId }).then((dance) => {
-          Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((updatedDancer) => {
+          Dancer.findOne({_id: req.body.dancer._id}).then((updatedDancer) => {
             if (dance.length === 0) {
               const newDance = new Dance({
                 danceName: req.body.danceName,
@@ -103,7 +103,7 @@ router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
 })
 
 router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
-  Dancer.findOne({auditionNum: req.body.dancer.auditionNum}).then((dancer) => {
+  Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
     let ind = -1;
     for (var i = 0; i < dancer.rosteredDances.length; i++) {
       if (dancer.rosteredDances[i] === req.body.danceName) {
@@ -115,15 +115,16 @@ router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
     const tempList = dancer.rosteredDances.slice();
     tempList.splice(ind, 1);
     Dancer.updateOne(
-      { auditionNum: req.body.dancer.auditionNum},
+      { _id: req.body.dancer._id},
       { $set: {rosteredDances: tempList}}
     ).then(() => {
       Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
         const tempMembers = dance.members.slice();
         let ind = -1;
         for (var i = 0; i < tempMembers.length; i++) {
-          if (tempMembers[i].auditionNum == req.body.dancer.auditionNum) {
+          if (tempMembers[i]._id == req.body.dancer._id) {
             ind = i;
+            break;
           }
         }
         if (ind !== -1) {
@@ -153,7 +154,7 @@ router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
 })
 
 router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
-  dancer.findOne({ auditionNum: req.query.dancerAuditionNum }).then((dancer) => {
+  Dancer.findOne({ _id: req.query.dancerId }).then((dancer) => {
     if (dancer) {
       res.send(dancer);
     }

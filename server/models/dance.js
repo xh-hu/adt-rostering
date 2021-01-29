@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const DanceSchema = new mongoose.Schema({
   danceName: String,
-  danceId: Number,
+  danceId: String,
   members: Array,
 });
 

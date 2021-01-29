@@ -3,10 +3,7 @@ import React, { useState, useEffect } from "react";
 import "./NameBlock.css";
 
 function NameBlock(props) {
-  const {firstname, nickname, lastname, year, auditionNum, numDances, rosteredDances, comments, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
-
-  useEffect(() => {
-  }, [rosteredDances])
+  const {dancer, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
 
   return (
     <div className="nameBlock-container">
@@ -15,33 +12,33 @@ function NameBlock(props) {
             { addFunction ? 
             <div className="nameBlock-pref-add">
                 <div>{danceRanking}</div>
-                <button onClick={() => addFunction(auditionNum)}>Add to Dance</button>
+                <button onClick={() => addFunction(dancer)}>Add to Dance</button>
             </div>: 
             <div className="nameBlock-pref-add">
                 <div>{danceRanking}</div>
-                <button onClick={() => removeFunction(auditionNum)}>Remove from Dance</button>
+                <button onClick={() => removeFunction(dancer)}>Remove from Dance</button>
             </div>
             }
             </>
             :
             <div className="nameBlock-auditionNum">
-                {auditionNum}
+                {dancer.auditionNum}
             </div>
         }
         <div className="nameBlock-name">
-            {firstname + (nickname !== "" ? " (" + nickname + ") " : " ") + lastname}
+            {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
         </div>
         <div className="nameBlock-year">
-            {year}
+            {dancer.year}
         </div>
         <div className="nameBlock-prefs">
-            <button onClick={() => toggleModal(auditionNum)}>View Prefs</button>
+            <button onClick={() => toggleModal(dancer)}>View Prefs</button>
         </div>
         <div className="nameBlock-numDancesRequested">
-            {rosteredDances.length}/{numDances}
+            {dancer.rosteredDances.length}/{dancer.numDances}
         </div>
         <div className="nameBlock-rosteredDancesContainer">
-            {rosteredDances.map((dance) => 
+            {dancer.rosteredDances.map((dance) => 
                 dance + " "
             )}
         </div>

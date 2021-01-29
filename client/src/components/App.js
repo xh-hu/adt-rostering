@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Router, Location } from "@reach/router";
 import { get, post } from "../utilities.js";
 import NotFound from "./pages/NotFound.js";
@@ -21,6 +21,9 @@ const OnRouteChange = ( { action } ) => (
 
 function App(props) {
   const [googleId, setGoogleId] = useState(null);
+  const [myDanceName, setMyDanceName] = useState(null);
+  const [myDanceIndex, setMyDanceIndex] = useState(null);
+
   const [allDancers, setAllDancers] = useState([]);
   const [modalOpen, toggleModalState] = useState(false);
   const [displayedDancer, setDancer] = useState(null);
@@ -28,36 +31,30 @@ function App(props) {
   const [myDancers, setMyDancers] = useState(null);
   const [notMyDancers, setNotMyDancers] = useState(null);
 
-
-  useLayoutEffect(() => {
-    console.log(window.location.pathname)
-    window.scrollTo(0, 0);
-  }, [window.location.pathname]);
-
   useEffect(()=> {
     async function getData() {
         get("/api/allDancers").then((allDancerData) => {
             setAllDancers(allDancerData);
-            /**Hardcoded ID **/
-            get("/api/getDance", {danceId: 1}).then((myDancerData) => {
-              console.log(myDancerData);
-              setMyDancers(myDancerData);
-              const tempList = [];
-              for (var i = 0; i < allDancerData.length; i++) {
-                let isMyDancer = false;
-                for (var j = 0; j < myDancerData.length; j++) {
-                  if (allDancerData[i]._id == myDancerData[j]._id) {
-                    isMyDancer = true;
-                    break;
+            if (myDanceIndex) {
+              get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
+                setMyDancers(myDancerData);
+                const tempList = [];
+                for (var i = 0; i < allDancerData.length; i++) {
+                  let isMyDancer = false;
+                  for (var j = 0; j < myDancerData.length; j++) {
+                    if (allDancerData[i]._id == myDancerData[j]._id) {
+                      isMyDancer = true;
+                      break;
+                    }
+                  }
+                  if (!isMyDancer) {
+                    tempList.push(allDancerData[i]);
                   }
                 }
-                if (!isMyDancer) {
-                  tempList.push(allDancerData[i]);
-                }
-              }
-              console.log(tempList);
-              setNotMyDancers(tempList);
-          });
+                setNotMyDancers(tempList);
+            });
+            }
+            
         });
     }
 
@@ -67,19 +64,24 @@ function App(props) {
     else {
       get("/api/whoami").then((user) => {
         if (user.email) {
-          // they are registed in the database, and currently logged in.
-          setGoogleId(user.email);
+          get("/api/validChoreog", { googleid: user.googleid, gmail: user.email }).then((choreog) => {
+            setGoogleId(user.email);
+            setMyDanceName(choreog.dance_name);
+            setMyDanceIndex(choreog.dance_index);
+          })
         }
       });
     }
-  }, [allDancers, googleId]);
+  }, [allDancers, googleId, myDanceIndex, myDanceName]);
 
   function handleLogin(res) {
     const userToken = res.tokenObj.id_token;
     post("/api/login", { token: userToken }).then((user) => {
-      get("/api/validChoreog", { googleid: res.profileObj.googleId, gmail: res.profileObj.email }).then((result) => {
+      get("/api/validChoreog", { googleid: res.profileObj.googleId, gmail: res.profileObj.email }).then((choreog) => {
         setGoogleId(res.profileObj.email);
         console.log("Welcome choreographer " + res.profileObj.name);
+        setMyDanceName(choreog.dance_name);
+        setMyDanceIndex(choreog.dance_index);
       })
     });
   };
@@ -89,7 +91,7 @@ function App(props) {
     post("/api/logout");
   };
 
-  function toggleModal(auditionNum) {
+  function toggleModal(dancer) {
     if (modalOpen) {
         toggleModalState(false);
         setDancer(null);
@@ -97,37 +99,32 @@ function App(props) {
     }
     else {
         toggleModalState(true);
-        for (var i = 0; i < allDancers.length; i++) {
-          const dancer = allDancers[i];
-          let tempPrefs = [];
-          if (dancer.auditionNum == auditionNum) {
-              setDancer(dancer);
-              tempPrefs = [
-                  [0, dancer.dance_0],
-                  [1, dancer.dance_1],
-                  [2, dancer.dance_2],
-                  [3, dancer.dance_3],
-                  [4, dancer.dance_4],
-                  [5, dancer.dance_5],
-                  [6, dancer.dance_6],
-                  [7, dancer.dance_7],
-                  [8, dancer.dance_8],
-                  [9, dancer.dance_9],
-                  [10, dancer.dance_10],
-                  [11, dancer.dance_11],
-                  [12, dancer.dance_12],
-                  [13, dancer.dance_13],
-                  [14, dancer.dance_14],
-                  [15, dancer.dance_15],
-                  [16, dancer.dance_16],
-                  [17, dancer.dance_17]
-              ];
-              tempPrefs.sort(function (a, b) {
-                  return a[1] - b[1];
-              })
-              setPrefs(tempPrefs);
-          }
-        }
+        let tempPrefs = [];
+        setDancer(dancer);
+        tempPrefs = [ /** Change this to have actual dance names */
+            [0, dancer.dance_0],
+            [1, dancer.dance_1],
+            [2, dancer.dance_2],
+            [3, dancer.dance_3],
+            [4, dancer.dance_4],
+            [5, dancer.dance_5],
+            [6, dancer.dance_6],
+            [7, dancer.dance_7],
+            [8, dancer.dance_8],
+            [9, dancer.dance_9],
+            [10, dancer.dance_10],
+            [11, dancer.dance_11],
+            [12, dancer.dance_12],
+            [13, dancer.dance_13],
+            [14, dancer.dance_14],
+            [15, dancer.dance_15],
+            [16, dancer.dance_16],
+            [17, dancer.dance_17]
+        ];
+        tempPrefs.sort(function (a, b) {
+            return a[1] - b[1];
+        })
+        setPrefs(tempPrefs);
     }
   }
 
@@ -152,9 +149,11 @@ function App(props) {
               displayedPrefs={displayedPrefs}
               toggleModal={toggleModal}
             /> 
-            { notMyDancers && myDancers ? 
+            { notMyDancers && myDancers && myDanceName && myDanceIndex ? 
             <Dance path="/dance"
               notMyDancers={notMyDancers}
+              myDanceName={myDanceName}
+              myDanceIndex={myDanceIndex}
               myDancers={myDancers}
               displayedDancer={displayedDancer}
               displayedPrefs={displayedPrefs}

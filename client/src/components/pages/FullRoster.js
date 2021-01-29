@@ -12,7 +12,7 @@ function FullRoster(props) {
 
   return (
     <div className="FullRoster-container">
-      <h1>Roster</h1>
+      <div className="FullRoster-title">Full Roster</div>
       <div className="FullRoster-header">
           <div>Audition #</div>
           <div>Name</div>
@@ -24,14 +24,7 @@ function FullRoster(props) {
       {allDancers.length !== 0 ? 
         allDancers.map((dancer) => 
             <NameBlock
-                firstname={dancer.firstName}
-                nickname={dancer.nickname}
-                lastname={dancer.lastName}
-                year={dancer.year}
-                auditionNum={dancer.auditionNum}
-                numDances={dancer.numDances}
-                rosteredDances={dancer.rosteredDances}
-                comments={dancer.comments}
+                dancer={dancer}
                 toggleModal={toggleModal}
             />
         ) : null

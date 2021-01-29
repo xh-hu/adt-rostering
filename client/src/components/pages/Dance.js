@@ -7,17 +7,16 @@ import "./Dance.css";
 
 
 function Dance(props) {
-  const { notMyDancers, myDancers, displayedDancer, displayedPrefs, toggleModal } = props;
+  const { notMyDancers, myDanceName, myDanceIndex, myDancers, displayedDancer, displayedPrefs, toggleModal } = props;
 
   const [dancerList, setDancerList] = useState(null);
   const [rosteredList, setRosteredList] = useState(null);
 
   useEffect(() => {
-    if (notMyDancers) {
+    if (notMyDancers && myDanceIndex) {
         const tempDancerList = notMyDancers.slice();
         tempDancerList.sort(function(a, b) {
-            //HARDCODED TO DANCE 1
-            return a.dance_1 - b.dance_1;
+            return a[myDanceIndex] - b[myDanceIndex];
         })
         setDancerList(tempDancerList);
         setRosteredList(myDancers);
@@ -25,40 +24,26 @@ function Dance(props) {
   }, [notMyDancers]);
 
 
-  function addToDance(auditionNum) {
-    /* HARDCODED DANCE NUMBER */
-    let addingDancer = null;
-    for (var i = 0; i < dancerList.length; i++) {
-      if (dancerList[i].auditionNum == auditionNum) {
-        addingDancer = dancerList[i];
-      }
-    }
-    post("/api/addToDance", {danceId: 1, danceName: "dance_1", dancer: addingDancer}).then((f) => {
-      get("/api/getDancer", {dancerAuditionNum: auditionNum}).then((dancer) => {
-        setRosteredList([ ... rosteredList, dancer]);
-        const ind = dancerList.indexOf(addingDancer);
-        if (ind !== -1) {
-          const tempList = dancerList.slice();
-          tempList.splice(ind, 1);
-          setDancerList(tempList);      
+  function addToDance(addingDancer) {
+    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((f) => {
+      get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
+      setRosteredList([ ... rosteredList, dancer]);
+      const ind = dancerList.indexOf(addingDancer);
+      if (ind !== -1) {
+        const tempList = dancerList.slice();
+        tempList.splice(ind, 1);
+        setDancerList(tempList);      
         }
-      })
+      });
     });
   }
 
-  function removeFromDance(auditionNum) {
-    let removingDancer = null;
-    for (var i = 0; i < rosteredList.length; i++) {
-      if (rosteredList[i].auditionNum == auditionNum) {
-        removingDancer = rosteredList[i];
-      }
-    }
-    post("/api/removeFromDance", {danceId: 1, danceName: "dance_1", dancer: removingDancer}).then((f) => {
-      get("/api/getDancer", {dancerAuditionNum: auditionNum}).then((dancer) => {
+  function removeFromDance(removingDancer) {
+    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((f) => {
+      get("/api/getDancer", {dancerId: removingDancer._id}).then((dancer) => {
         const tempDancerList = [ ... dancerList, dancer];
         tempDancerList.sort(function(a, b) {
-          //HARDCODED TO DANCE 1
-          return a.dance_1 - b.dance_1;
+          return a[myDanceIndex] - b[myDanceIndex];
         })
         setDancerList(tempDancerList);
         const ind = rosteredList.indexOf(removingDancer);
@@ -67,70 +52,56 @@ function Dance(props) {
           tempList.splice(ind, 1);
           setRosteredList(tempList);      
         }
-      })
+      });
     });
   }
 
   return (
-    <>
-    <h1>Dance: Dance 1</h1> {/*HARDCODED*/}
-    <div className="Dance-header">
-          <div>Dance pref</div>
-          <div>Name</div>
-          <div>Year</div>
-          <div>Prefs</div>
-          <div>Quota</div>
-          <div>Rostered Dances</div>
+    <div className="Dance-outer-container">
+      {myDanceName ? <div className="Dance-title">My dance ({myDanceName})</div> : null}
+      <div className="Dance-header">
+            <div>Dance pref</div>
+            <div>Name</div>
+            <div>Year</div>
+            <div>Prefs</div>
+            <div>Quota</div>
+            <div>Rostered Dances</div>
+      </div>
+      <div className="Dance-container">
+          {/*HARDCODED CURRENT DANCE*/}
+          {rosteredList ? rosteredList.map((dancer) => 
+              <NameBlock
+                  dancer={dancer}
+                  toggleModal={toggleModal}
+                  onDancePage={true}
+                  danceRanking={dancer[myDanceIndex]}
+                  addFunction={null}
+                  removeFunction={removeFromDance} 
+                  
+              />
+          ) : null}
+          <hr></hr>
+          {dancerList ? dancerList.map((dancer) => 
+              <NameBlock
+                  dancer={dancer}
+                  toggleModal={toggleModal}
+                  onDancePage={true}
+                  danceRanking={dancer[myDanceIndex]} 
+                  addFunction={addToDance}
+                  removeFunction={null}
+              />
+          ) : null}
+        
+        {displayedDancer ? 
+        <PrefModal
+          displayedDancer={displayedDancer}
+          displayedPrefs={displayedPrefs}
+          toggleModal={toggleModal}
+          comments={displayedDancer.comments}
+        />
+        : null}
+      </div>
     </div>
-    <div className="Dance-container">
-        {/*HARDCODED CURRENT DANCE*/}
-        {rosteredList ? rosteredList.map((dancer) => 
-            <NameBlock
-                firstname={dancer.firstName}
-                nickname={dancer.nickname}
-                lastname={dancer.lastName}
-                year={dancer.year}
-                auditionNum={dancer.auditionNum}
-                numDances={dancer.numDances}
-                rosteredDances={dancer.rosteredDances}
-                comments={dancer.comments}
-                toggleModal={toggleModal}
-                onDancePage={true}
-                danceRanking={dancer.dance_1}
-                addFunction={null}
-                removeFunction={removeFromDance} 
-                
-            />
-        ) : null}
-        <hr></hr>
-        {dancerList ? dancerList.map((dancer) => 
-            <NameBlock
-                firstname={dancer.firstName}
-                nickname={dancer.nickname}
-                lastname={dancer.lastName}
-                year={dancer.year}
-                auditionNum={dancer.auditionNum}
-                numDances={dancer.numDances}
-                rosteredDances={dancer.rosteredDances}
-                comments={dancer.comments}
-                toggleModal={toggleModal}
-                onDancePage={true}
-                danceRanking={dancer.dance_1} 
-                addFunction={addToDance}
-                removeFunction={null}
-            />
-        ) : null}
-      
-      {displayedDancer ? 
-      <PrefModal
-        displayedDancer={displayedDancer}
-        displayedPrefs={displayedPrefs}
-        toggleModal={toggleModal}
-        comments={displayedDancer.comments}
-      />
-      : null}
-    </div>
-    </>
   );
   
 }

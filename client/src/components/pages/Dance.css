@@ -1,5 +1,20 @@
+.Dance-outer-container {
+  width: 100vw;
+  height: fit-content;
+}
+
+.Dance-title {
+  font-size: 30px;
+  font-weight: 700;
+  width: 100vw;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
 .Dance-container {
   width: 90vw;
+  margin-left: 5vw;
 }
 
 .Dance-ranking {
@@ -8,7 +23,7 @@
 }
 
 .Dance-header {
-  max-width: 90vw;
+  width: 90vw;
   height: 60px;
   display: grid;
   grid-template-columns: 18vw repeat(5, 12vw);

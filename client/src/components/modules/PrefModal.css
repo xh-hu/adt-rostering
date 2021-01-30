@@ -15,10 +15,12 @@
   position: fixed;
   width: 30vw;
   height: fit-content;
+  max-height: 75vh;
+  overflow-y: scroll;
   background-color: white;
   z-index: 10;
   opacity: 100%;
-  top: 20vh;
+  top: 15vh;
   left: 35vw;
   padding: 20px;
   border-radius: 20px;
@@ -41,6 +43,8 @@
   max-width: 40%;
   overflow-x: wrap;
   overflow-y: scroll;
+  max-height: 45vh;
+  font-size: 12px;
 }
 
 .PrefModal-prefModal button {

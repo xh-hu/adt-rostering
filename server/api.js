@@ -66,30 +66,35 @@ router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
   Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
     if (dancer.rosteredDances) {
       console.log("dance does not exist, dancer rosteredDances exists");
-      Dancer.updateOne(
-        { _id: req.body.dancer._id},
-        { $push: {rosteredDances: req.body.danceName}}
-      ).then(() => {
-        Dance.find({ danceId: req.body.danceId }).then((dance) => {
-          Dancer.findOne({_id: req.body.dancer._id}).then((updatedDancer) => {
-            if (dance.length === 0) {
-              const newDance = new Dance({
-                danceName: req.body.danceName,
-                danceId: req.body.danceId,
-                members: [updatedDancer],
-              });
-              newDance.save().then(() => res.send({}));
-            }
-            else {
-              Dance.updateOne(
-                { danceId: req.body.danceId },
-                { $push: {members: updatedDancer} }
-                ).then(() => res.send({}));
-            }
+      if (!dancer.rosteredDances.includes(req.body.danceName)) {
+        Dancer.updateOne(
+          { _id: req.body.dancer._id},
+          { $push: {rosteredDances: req.body.danceName}}
+        ).then(() => {
+          Dance.find({ danceId: req.body.danceId }).then((dance) => {
+            Dancer.findOne({_id: req.body.dancer._id}).then((updatedDancer) => {
+              if (dance.length === 0) {
+                const newDance = new Dance({
+                  danceName: req.body.danceName,
+                  danceId: req.body.danceId,
+                  members: [updatedDancer],
+                });
+                newDance.save().then(() => res.send({}));
+              }
+              else {
+                Dance.updateOne(
+                  { danceId: req.body.danceId },
+                  { $push: {members: updatedDancer} }
+                  ).then(() => res.send({}));
+              }
+            })
           })
-        })
-
-      });
+  
+        });
+      }
+      else {
+        res.send("Already in dance.");
+      }
     }
     else {
       console.log("nothing exists");
@@ -136,6 +141,9 @@ router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
               res.send({});
             }
           );
+        }
+        else {
+          res.send("Already removed");
         }
       });
     });

@@ -8,57 +8,7 @@ import "./Dance.css";
 
 
 function Dance(props) {
-  const { notMyDancers, myDanceName, myDanceIndex, myDancers, displayedDancer, displayedPrefs, toggleModal } = props;
-
-  const [dancerList, setDancerList] = useState(null);
-  const [rosteredList, setRosteredList] = useState(null);
-
-  useEffect(() => {
-    if (notMyDancers && myDanceIndex) {
-        const tempDancerList = notMyDancers.slice();
-        tempDancerList.sort(function(a, b) {
-            return a[myDanceIndex] - b[myDanceIndex];
-        })
-        setDancerList(tempDancerList);
-        setRosteredList(myDancers);
-    }
-    else {
-      navigate("/");
-    }
-  }, [notMyDancers]);
-
-
-  function addToDance(addingDancer) {
-    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((f) => {
-      get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
-      setRosteredList([ ... rosteredList, dancer]);
-      const ind = dancerList.indexOf(addingDancer);
-      if (ind !== -1) {
-        const tempList = dancerList.slice();
-        tempList.splice(ind, 1);
-        setDancerList(tempList);      
-        }
-      });
-    });
-  }
-
-  function removeFromDance(removingDancer) {
-    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((f) => {
-      get("/api/getDancer", {dancerId: removingDancer._id}).then((dancer) => {
-        const tempDancerList = [ ... dancerList, dancer];
-        tempDancerList.sort(function(a, b) {
-          return a[myDanceIndex] - b[myDanceIndex];
-        })
-        setDancerList(tempDancerList);
-        const ind = rosteredList.indexOf(removingDancer);
-        if (ind !== -1) {
-          const tempList = rosteredList.slice();
-          tempList.splice(ind, 1);
-          setRosteredList(tempList);      
-        }
-      });
-    });
-  }
+  const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance} = props;
 
   return (
     <div className="Dance-outer-container">
@@ -72,7 +22,6 @@ function Dance(props) {
             <div>Rostered Dances</div>
       </div>
       <div className="Dance-container">
-          {/*HARDCODED CURRENT DANCE*/}
           {rosteredList ? rosteredList.map((dancer) => 
               <NameBlock
                   dancer={dancer}

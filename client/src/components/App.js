@@ -30,8 +30,9 @@ function App(props) {
   const [modalOpen, toggleModalState] = useState(false);
   const [displayedDancer, setDancer] = useState(null);
   const [displayedPrefs, setPrefs] = useState([]);
-  const [myDancers, setMyDancers] = useState(null);
-  const [notMyDancers, setNotMyDancers] = useState(null);
+
+  const [dancerList, setDancerList] = useState(null);
+  const [rosteredList, setRosteredList] = useState(null);
 
   useEffect(()=> {
     async function getData() {
@@ -39,7 +40,10 @@ function App(props) {
             setAllDancers(allDancerData);
             if (myDanceIndex) {
               get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
-                setMyDancers(myDancerData);
+                myDancerData.sort(function(a, b) {
+                  return a[myDanceIndex] - b[myDanceIndex];
+                })
+                setRosteredList(myDancerData);
                 const tempList = [];
                 for (var i = 0; i < allDancerData.length; i++) {
                   let isMyDancer = false;
@@ -53,7 +57,10 @@ function App(props) {
                     tempList.push(allDancerData[i]);
                   }
                 }
-                setNotMyDancers(tempList);
+                tempList.sort(function(a, b) {
+                  return a[myDanceIndex] - b[myDanceIndex];
+                })
+                setDancerList(tempList);
             });
             }
             
@@ -74,6 +81,7 @@ function App(props) {
         }
       });
     }
+
   }, [allDancers, googleId, myDanceIndex, myDanceName]);
 
   function handleLogin(res) {
@@ -130,6 +138,46 @@ function App(props) {
     }
   }
 
+  function addToDance(addingDancer) {
+    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((f) => {
+      get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
+        setRosteredList([ ... rosteredList, dancer]);
+        const ind = dancerList.indexOf(addingDancer);
+        if (ind !== -1) {
+          const tempList = dancerList.slice();
+          tempList.splice(ind, 1);
+          setDancerList(tempList);      
+          }
+        const ind2 = allDancers.indexOf(addingDancer);
+        if (ind2 !== -1) {
+          setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+        }
+      });
+    });
+  }
+
+  function removeFromDance(removingDancer) {
+    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((f) => {
+      get("/api/getDancer", {dancerId: removingDancer._id}).then((dancer) => {
+        const tempDancerList = [ ... dancerList, dancer];
+        tempDancerList.sort(function(a, b) {
+          return a[myDanceIndex] - b[myDanceIndex];
+        })
+        setDancerList(tempDancerList);
+        const ind = rosteredList.indexOf(removingDancer);
+        if (ind !== -1) {
+          const tempList = rosteredList.slice();
+          tempList.splice(ind, 1);
+          setRosteredList(tempList);      
+        }
+        const ind2 = allDancers.indexOf(removingDancer);
+        if (ind2 !== -1) {
+          setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+        }
+      });
+    });
+  }
+
 
 
     return (
@@ -151,15 +199,17 @@ function App(props) {
               displayedPrefs={displayedPrefs}
               toggleModal={toggleModal}
             /> 
-            { notMyDancers && myDancers && myDanceName && myDanceIndex ? 
+            { rosteredList && dancerList && myDanceName && myDanceIndex ? 
             <Dance path="/dance"
-              notMyDancers={notMyDancers}
+              rosteredList={rosteredList}
+              dancerList={dancerList}
               myDanceName={myDanceName}
               myDanceIndex={myDanceIndex}
-              myDancers={myDancers}
               displayedDancer={displayedDancer}
               displayedPrefs={displayedPrefs}
-              toggleModal={toggleModal} />
+              toggleModal={toggleModal}
+              addToDance={addToDance}
+              removeFromDance={removeFromDance}/>
             : null} 
             <Admin path="/admin" />
             <NotFound default />

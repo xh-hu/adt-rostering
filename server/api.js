@@ -134,7 +134,8 @@ router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
             { $set: {members: tempMembers }}
             ).then(() => {
               res.send({});
-            });
+            }
+          );
         }
       });
     });

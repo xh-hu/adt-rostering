@@ -12,7 +12,8 @@ function NameBlock(props) {
             { addFunction ? 
             <div className="nameBlock-pref-add">
                 <div>{danceRanking}</div>
-                <button onClick={() => addFunction(dancer)}>Add to Dance</button>
+                <button onClick={() => {
+                    addFunction(dancer)}}>Add to Dance</button>
             </div>: 
             <div className="nameBlock-pref-remove">
                 <div>{danceRanking}</div>
@@ -35,12 +36,14 @@ function NameBlock(props) {
             <button onClick={() => toggleModal(dancer)}>View Prefs</button>
         </div>
         <div className="nameBlock-numDancesRequested">
-            {dancer.rosteredDances.length}/{dancer.numDances}
+            {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
         </div>
         <div className="nameBlock-rosteredDancesContainer">
-            {dancer.rosteredDances.map((dance) => 
+            {dancer.rosteredDances ? 
+            dancer.rosteredDances.map((dance) => 
                 dance + " "
-            )}
+            ):
+            null}
         </div>
     </div>
   );

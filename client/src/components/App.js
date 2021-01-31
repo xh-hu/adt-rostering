@@ -9,6 +9,8 @@ import FullRoster from "./pages/FullRoster.js";
 
 import logo from "../public/adt_rectangle_logo.png";
 
+import { socket } from "../client-socket.js";
+
 import "../utilities.css";
 import "./App.css";
 
@@ -34,8 +36,12 @@ function App(props) {
   const [dancerList, setDancerList] = useState(null);
   const [rosteredList, setRosteredList] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(()=> {
+    
     async function getData() {
+        setIsLoading(true);
         get("/api/allDancers").then((allDancerData) => {
             setAllDancers(allDancerData);
             if (myDanceIndex) {
@@ -68,7 +74,9 @@ function App(props) {
     }
 
     if (allDancers.length == 0 && googleId) {
-        getData();
+        getData().then(() => {
+          setIsLoading(false);
+        });
     }
     else {
       get("/api/whoami").then((user) => {
@@ -81,6 +89,36 @@ function App(props) {
         }
       });
     }
+
+    socket.on("addDancerToDance", (data) => {
+      let ind = -1;
+      for (let i = 0; i < allDancers.length; i++) {
+        if (allDancers[i]._id == data.addedDancer._id) {
+          ind = i;
+          break;
+        }
+      } 
+      get("/api/getDancer", {dancerId: data.addedDancer._id}).then((updatedDancer) => {
+        if (ind !== -1) {
+          setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+        }
+      })
+    })
+
+    socket.on("removeDancerFromDance", (data) => {
+      let ind = -1;
+      for (let i = 0; i < allDancers.length; i++) {
+        if (allDancers[i]._id == data.removedDancer._id) {
+          ind = i;
+          break;
+        }
+      } 
+      get("/api/getDancer", { dancerId: data.removedDancer._id }).then((updatedDancer) => {
+        if (ind !== -1) {
+          setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+        }
+      })
+    })
 
   }, [allDancers, googleId, myDanceIndex, myDanceName]);
 
@@ -139,8 +177,9 @@ function App(props) {
   }
 
   function addToDance(addingDancer) {
-    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((f) => {
-      get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
+    setIsLoading(true);
+    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((dancer) => {
+      // get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
         setRosteredList([ ... rosteredList, dancer]);
         const ind = dancerList.indexOf(addingDancer);
         if (ind !== -1) {
@@ -152,29 +191,28 @@ function App(props) {
         if (ind2 !== -1) {
           setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
         }
-      });
+        setIsLoading(false);
+      // });
     });
   }
 
   function removeFromDance(removingDancer) {
-    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((f) => {
-      get("/api/getDancer", {dancerId: removingDancer._id}).then((dancer) => {
-        const tempDancerList = [ ... dancerList, dancer];
-        tempDancerList.sort(function(a, b) {
-          return a[myDanceIndex] - b[myDanceIndex];
-        })
-        setDancerList(tempDancerList);
-        const ind = rosteredList.indexOf(removingDancer);
-        if (ind !== -1) {
-          const tempList = rosteredList.slice();
-          tempList.splice(ind, 1);
-          setRosteredList(tempList);      
-        }
-        const ind2 = allDancers.indexOf(removingDancer);
-        if (ind2 !== -1) {
-          setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
-        }
-      });
+    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((dancer) => {
+      const tempDancerList = [ ... dancerList, dancer];
+      tempDancerList.sort(function(a, b) {
+        return a[myDanceIndex] - b[myDanceIndex];
+      })
+      setDancerList(tempDancerList);
+      const ind = rosteredList.indexOf(removingDancer);
+      if (ind !== -1) {
+        const tempList = rosteredList.slice();
+        tempList.splice(ind, 1);
+        setRosteredList(tempList);      
+      }
+      const ind2 = allDancers.indexOf(removingDancer);
+      if (ind2 !== -1) {
+        setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+      }
     });
   }
 
@@ -215,6 +253,10 @@ function App(props) {
             <NotFound default />
             </Router>
             <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
+
+            {allDancers ? 
+              <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+            : null}
         </>
           ) : (
             <div className="App-logo-container">

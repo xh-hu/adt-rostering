@@ -23,6 +23,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     dbName: databaseName,
+    useFindAndModify: false,
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(`Error connecting to MongoDB: ${err}`));

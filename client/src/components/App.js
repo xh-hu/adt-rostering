@@ -180,6 +180,7 @@ function App(props) {
     setIsLoading(true);
     post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((dancer) => {
       // get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
+        console.log(dancer);
         setRosteredList([ ... rosteredList, dancer]);
         const ind = dancerList.indexOf(addingDancer);
         if (ind !== -1) {

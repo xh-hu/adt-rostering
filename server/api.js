@@ -66,14 +66,16 @@ router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
   Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
     socketManager.getIo().emit("addDancerToDance", {addedDancer: dancer, danceName: req.body.danceName});
     if (dancer.rosteredDances) {
-      console.log("dance does not exist, dancer rosteredDances exists");
+      console.log("dancer rosteredDances exists");
       if (!dancer.rosteredDances.includes(req.body.danceName)) {
         Dancer.findOneAndUpdate(
           { _id: req.body.dancer._id},
           { $push: {rosteredDances: req.body.danceName}},
-          { returnNewDocument: true}
+          { new: true}
         ).then((updatedDancer) => {
+          console.log(updatedDancer);
           Dance.find({ danceId: req.body.danceId }).then((dance) => {
+            console.log("we found the dance");
             if (dance.length === 0) {
               const newDance = new Dance({
                 danceName: req.body.danceName,
@@ -101,7 +103,7 @@ router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
       Dancer.findOneAndUpdate(
         { _id: req.body.dancer._id},
         { $set: {rosteredDances: [req.body.danceName]}},
-        { returnNewDocument: true}
+        { new: true}
       ).then((updatedDancer) => res.send(updatedDancer));
     }
   });
@@ -124,8 +126,9 @@ router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
     Dancer.findOneAndUpdate(
       { _id: req.body.dancer._id},
       { $set: {rosteredDances: tempList}},
-      { returnNewDocument: true}
+      { new: true}
     ).then((updatedDancer) => {
+      console.log(updatedDancer);
       Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
         const tempMembers = dance.members.slice();
         let ind = -1;

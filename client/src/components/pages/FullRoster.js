@@ -24,6 +24,7 @@ function FullRoster(props) {
         {allDancers.length !== 0 ? 
           allDancers.map((dancer) => 
               <NameBlock
+                  key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
               />

@@ -24,6 +24,7 @@ function Dance(props) {
       <div className="Dance-container">
           {rosteredList ? rosteredList.map((dancer) => 
               <NameBlock
+                  key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
                   onDancePage={true}
@@ -36,6 +37,7 @@ function Dance(props) {
           <hr></hr>
           {dancerList ? dancerList.map((dancer) => 
               <NameBlock
+                  key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
                   onDancePage={true}

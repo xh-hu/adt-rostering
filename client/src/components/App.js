@@ -25,6 +25,7 @@ const OnRouteChange = ( { action } ) => (
 
 function App(props) {
   const [googleId, setGoogleId] = useState(null);
+  const [name, setName] = useState(null);
   const [myDanceName, setMyDanceName] = useState(null);
   const [myDanceIndex, setMyDanceIndex] = useState(null);
 
@@ -39,9 +40,8 @@ function App(props) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(()=> {
-    
+    console.log("calling useEffect");
     async function getData() {
-        setIsLoading(true);
         get("/api/allDancers").then((allDancerData) => {
             setAllDancers(allDancerData);
             if (myDanceIndex) {
@@ -69,20 +69,18 @@ function App(props) {
                 setDancerList(tempList);
             });
             }
-            
         });
     }
 
     if (allDancers.length == 0 && googleId) {
-        getData().then(() => {
-          setIsLoading(false);
-        });
+        getData();
     }
     else {
       get("/api/whoami").then((user) => {
         if (user.email) {
           get("/api/validChoreog", { googleid: user.googleid, gmail: user.email }).then((choreog) => {
             setGoogleId(user.email);
+            setName(user.name);
             setMyDanceName(choreog.dance_name);
             setMyDanceIndex(choreog.dance_index);
           })
@@ -90,43 +88,83 @@ function App(props) {
       });
     }
 
-    socket.on("addDancerToDance", (data) => {
-      let ind = -1;
-      for (let i = 0; i < allDancers.length; i++) {
-        if (allDancers[i]._id == data.addedDancer._id) {
-          ind = i;
+  }, [googleId, myDanceIndex, myDanceName]);
+
+  function updateDanceSpecificData(updatedDancer) {
+    if (rosteredList) {
+      for (let i = 0; i < rosteredList.length; i++) {
+        if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
+          console.log("matches rosteredList" + rosteredList);
+          setRosteredList([...rosteredList.slice(0, i), updatedDancer, ...rosteredList.slice(i+1)]);
           break;
         }
-      } 
-      get("/api/getDancer", {dancerId: data.addedDancer._id}).then((updatedDancer) => {
-        if (ind !== -1) {
-          setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
-        }
-      })
-    })
-
-    socket.on("removeDancerFromDance", (data) => {
-      let ind = -1;
-      for (let i = 0; i < allDancers.length; i++) {
-        if (allDancers[i]._id == data.removedDancer._id) {
-          ind = i;
+      }
+    }
+    if (dancerList) {
+      for (let i = 0; i < dancerList.length; i++) {
+        if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
+          console.log("matches dancerList" + dancerList);
+          setDancerList([...dancerList.slice(0, i), updatedDancer, ...dancerList.slice(i+1)]);
           break;
         }
-      } 
-      get("/api/getDancer", { dancerId: data.removedDancer._id }).then((updatedDancer) => {
-        if (ind !== -1) {
-          setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
-        }
-      })
-    })
+      }
+    }
+  }
+  
 
-  }, [allDancers, googleId, myDanceIndex, myDanceName]);
+  useEffect(() => {
+    socket.once("addDancerToDance", (data) => {
+      console.log(data.name + " making changes");
+      if (data.name !== name) {
+        let ind = -1;
+        for (let i = 0; i < allDancers.length; i++) {
+          if (allDancers[i]._id == data.addedDancer._id) {
+            ind = i;
+            break;
+          }
+        } 
+        get("/api/getDancer", {dancerId: data.addedDancer._id}).then((updatedDancer) => {
+          if (ind !== -1) {
+            setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+            updateDanceSpecificData(updatedDancer);
+          }
+        })
+      }
+    })
+    return () => {
+      socket.off("addDancerToDance");
+    }
+  })
+  
+  useEffect(() => {
+    socket.once("removeDancerFromDance", (data) => {
+      if (data.name !== name) {
+        let ind = -1;
+        for (let i = 0; i < allDancers.length; i++) {
+          if (allDancers[i]._id == data.removedDancer._id) {
+            ind = i;
+            break;
+          }
+        } 
+        get("/api/getDancer", { dancerId: data.removedDancer._id }).then((updatedDancer) => {
+          if (ind !== -1) {
+            setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+            updateDanceSpecificData(updatedDancer);
+          }
+        })
+      }
+    })
+    return () => {
+      socket.off("removeDancerFromDance");
+    }
+  })
 
   function handleLogin(res) {
     const userToken = res.tokenObj.id_token;
     post("/api/login", { token: userToken }).then((user) => {
       get("/api/validChoreog", { googleid: res.profileObj.googleId, gmail: res.profileObj.email }).then((choreog) => {
         setGoogleId(res.profileObj.email);
+        setName(res.profileObj.name);
         console.log("Welcome choreographer " + res.profileObj.name);
         setMyDanceName(choreog.dance_name);
         setMyDanceIndex(choreog.dance_index);
@@ -177,38 +215,29 @@ function App(props) {
   }
 
   function addToDance(addingDancer) {
-    setIsLoading(true);
-    post("/api/addToDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((dancer) => {
-      // get("/api/getDancer", {dancerId: addingDancer._id}).then((dancer) => {
-        console.log(dancer);
-        setRosteredList([ ... rosteredList, dancer]);
-        const ind = dancerList.indexOf(addingDancer);
-        if (ind !== -1) {
-          const tempList = dancerList.slice();
-          tempList.splice(ind, 1);
-          setDancerList(tempList);      
-          }
-        const ind2 = allDancers.indexOf(addingDancer);
-        if (ind2 !== -1) {
-          setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
-        }
-        setIsLoading(false);
-      // });
+    post("/api/addToDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((dancer) => {
+      setRosteredList([ ...rosteredList, dancer]);
+      const ind = dancerList.indexOf(addingDancer);
+      if (ind !== -1) {
+        setDancerList([...dancerList.slice(0, ind), ...dancerList.slice(ind+1)])   
+      }
+      const ind2 = allDancers.indexOf(addingDancer);
+      if (ind2 !== -1) {
+        setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+      }
     });
   }
 
   function removeFromDance(removingDancer) {
-    post("/api/removeFromDance", {danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((dancer) => {
-      const tempDancerList = [ ... dancerList, dancer];
+    post("/api/removeFromDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((dancer) => {
+      const tempDancerList = [ ...dancerList, dancer];
       tempDancerList.sort(function(a, b) {
         return a[myDanceIndex] - b[myDanceIndex];
       })
       setDancerList(tempDancerList);
       const ind = rosteredList.indexOf(removingDancer);
       if (ind !== -1) {
-        const tempList = rosteredList.slice();
-        tempList.splice(ind, 1);
-        setRosteredList(tempList);      
+        setRosteredList([...rosteredList.slice(0, ind), ...rosteredList.slice(ind+1)]);
       }
       const ind2 = allDancers.indexOf(removingDancer);
       if (ind2 !== -1) {

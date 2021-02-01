@@ -22,7 +22,6 @@ const auth = require("./auth");
 const router = express.Router();
 
 const socketManager = require("./server-socket");
-const dancer = require("./models/dancer");
 
 
 router.post("/login", auth.login);
@@ -62,99 +61,147 @@ router.get("/allDancers", auth.ensureLoggedIn, (req, res) => {
   });
 })
 
-router.post("/addToDance", auth.ensureLoggedIn, (req, res) => {
-  Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
-    socketManager.getIo().emit("addDancerToDance", {addedDancer: dancer, danceName: req.body.danceName});
-    if (dancer.rosteredDances) {
-      console.log("dancer rosteredDances exists");
-      if (!dancer.rosteredDances.includes(req.body.danceName)) {
-        Dancer.findOneAndUpdate(
-          { _id: req.body.dancer._id},
-          { $push: {rosteredDances: req.body.danceName}},
-          { new: true}
-        ).then((updatedDancer) => {
-          console.log(updatedDancer);
-          Dance.find({ danceId: req.body.danceId }).then((dance) => {
-            console.log("we found the dance");
-            if (dance.length === 0) {
-              const newDance = new Dance({
-                danceName: req.body.danceName,
-                danceId: req.body.danceId,
-                members: [updatedDancer],
-              });
-              newDance.save().then(() => res.send(updatedDancer));
-            }
-            else {
-              Dance.updateOne(
-                { danceId: req.body.danceId },
-                { $push: {members: updatedDancer} }
-                ).then(() => res.send(updatedDancer));
-            }
-          })
-  
+router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
+  //Dancer logic
+  const dancer = await Dancer.findOne({_id: req.body.dancer._id});
+  if (dancer.rosteredDances) {
+    if (!dancer.rosteredDances.includes(req.body.danceName)) {
+      const updatedDancer = await Dancer.findOneAndUpdate(
+        { _id: req.body.dancer._id},
+        { $push: {rosteredDances: req.body.danceName}},
+        { new: true}
+      );
+      console.log("updated Dancer: " + updatedDancer);
+      const dance = await Dance.find({ danceId: req.body.danceId })
+      if (dance.length === 0) {
+        const newDance = new Dance({
+          danceName: req.body.danceName,
+          danceId: req.body.danceId,
+          members: [updatedDancer],
         });
+        await newDance.save();
       }
       else {
-        res.send("Already in dance.");
+        await Dance.updateOne(
+          { danceId: req.body.danceId },
+          { $push: {members: updatedDancer} }
+        );
       }
+      await updateOtherDancesForAdd(dancer, updatedDancer);
+      await socketManager.getIo().emit("addDancerToDance", {name: req.body.choreogName, addedDancer: dancer, danceName: req.body.danceName});
+      res.send(updatedDancer);
     }
     else {
-      console.log("nothing exists");
-      Dancer.findOneAndUpdate(
-        { _id: req.body.dancer._id},
-        { $set: {rosteredDances: [req.body.danceName]}},
-        { new: true}
-      ).then((updatedDancer) => res.send(updatedDancer));
+      res.send("Already in dance.");
     }
-  });
-  
+  }
+  else {
+    const updatedDancer = await Dancer.findOneAndUpdate(
+      { _id: req.body.dancer._id},
+      { $set: {rosteredDances: [req.body.danceName]}},
+      { new: true}
+    )
+    const dance = await Dance.find({ danceId: req.body.danceId });
+    if (dance.length === 0) {
+      const newDance = new Dance({
+        danceName: req.body.danceName,
+        danceId: req.body.danceId,
+        members: [updatedDancer],
+      });
+      await newDance.save();
+    }
+    else {
+      await Dance.updateOne(
+        { danceId: req.body.danceId },
+        { $push: {members: updatedDancer} }
+      );
+    }
+    await updateOtherDancesForAdd(dancer, updatedDancer);
+    await socketManager.getIo().emit("addDancerToDance", {name: req.body.choreogName, addedDancer: dancer, danceName: req.body.danceName});
+    res.send(updatedDancer);
+  }
 })
 
-router.post("/removeFromDance", auth.ensureLoggedIn, (req, res) => {
-  Dancer.findOne({_id: req.body.dancer._id}).then((dancer) => {
-    socketManager.getIo().emit("removeDancerFromDance", {removedDancer: dancer, danceName: req.body.danceName});
+async function updateOtherDancesForAdd(oldDancer, updatedDancer) {
+  const otherDances = await Dance.find({members: oldDancer});
+  for (let i = 0; i < otherDances.length; i++) {
     let ind = -1;
-    for (var i = 0; i < dancer.rosteredDances.length; i++) {
-      if (dancer.rosteredDances[i] === req.body.danceName) {
-        ind = i;
-        console.log(ind);
+    for (let j = 0; j < otherDances[i].members.length; j++) {
+      if (otherDances[i].members[j]._id.toString() == oldDancer._id.toString()) {
+        ind = j;
         break;
       }
     }
-    const tempList = dancer.rosteredDances.slice();
-    tempList.splice(ind, 1);
-    Dancer.findOneAndUpdate(
-      { _id: req.body.dancer._id},
-      { $set: {rosteredDances: tempList}},
-      { new: true}
-    ).then((updatedDancer) => {
-      console.log(updatedDancer);
-      Dance.findOne({ danceId: req.body.danceId }).then((dance) => {
-        const tempMembers = dance.members.slice();
-        let ind = -1;
-        for (var i = 0; i < tempMembers.length; i++) {
-          if (tempMembers[i]._id == req.body.dancer._id) {
-            ind = i;
-            break;
-          }
-        }
-        if (ind !== -1) {
-          tempMembers.splice(ind, 1);
-          Dance.updateOne(
-            { danceId: req.body.danceId },
-            { $set: {members: tempMembers }}
-            ).then(() => {
-              res.send(updatedDancer);
-            }
-          );
-        }
-        else {
-          res.send("Already removed");
-        }
-      });
-    });
-  });
+    if (ind !== -1) {
+      let tempList = [...otherDances[i].members.slice(0, ind), updatedDancer, ...otherDances[i].members.slice(ind+1)];
+      await Dance.findOneAndUpdate(
+        { _id: otherDances[i]._id },
+        { $set: {members: tempList}}
+      ); 
+    }
+  }
+}
+
+router.post("/removeFromDance", auth.ensureLoggedIn, async (req, res) => {
+  const dancer = await Dancer.findOne({_id: req.body.dancer._id});
+  let ind = -1;
+  for (let i = 0; i < dancer.rosteredDances.length; i++) {
+    if (dancer.rosteredDances[i] === req.body.danceName) {
+      ind = i;
+      break;
+    }
+  }
+  const tempList = [...dancer.rosteredDances.slice(0, ind), ...dancer.rosteredDances.slice(ind+1)];
+  const updatedDancer = await Dancer.findOneAndUpdate(
+    { _id: req.body.dancer._id},
+    { $set: {rosteredDances: tempList}},
+    { new: true}
+  );
+  console.log("updated dancer: " + updatedDancer);
+  let dance = await Dance.findOne({ danceId: req.body.danceId });
+  let ind2 = -1;
+  for (let i = 0; i < dance.members.length; i++) {
+    if (dance.members[i]._id.toString() == req.body.dancer._id.toString()) {
+      ind2 = i;
+      break;
+    }
+  }
+  if (ind2 !== -1) {
+    const tempMembers = [...dance.members.slice(0, ind2), ...dance.members.slice(ind2+1)]
+    await Dance.updateOne(
+      { danceId: req.body.danceId },
+      { $set: {members: tempMembers }}
+    );
+    await updateOtherDancesForRemove(dancer);
+    await socketManager.getIo().emit("removeDancerFromDance", {name: req.body.choreogName, removedDancer: dancer, danceName: req.body.danceName});
+    res.send(updatedDancer);
+  }
+  else {
+    res.send("Already removed");
+  }
 })
+
+async function updateOtherDancesForRemove(oldDancer) {
+  const otherDances = await Dance.find({members: oldDancer});
+  for (let i = 0; i < otherDances.length; i++) {
+    let ind = -1;
+    for (let j = 0; j < otherDances[i].members.length; j++) {
+      if (otherDances[i].members[j]._id.toString() == oldDancer._id.toString()) {
+        ind = j;
+        break;
+      }
+    }
+    if (ind !== -1) {
+      let tempList = [...otherDances[i].members.slice(0, ind), ...otherDances[i].members.slice(ind+1)];
+      await Dance.findOneAndUpdate(
+        { _id: otherDances[i]._id },
+        { $set: {members: tempList}},
+        { new: true}
+      );
+    }
+    
+  }
+}
 
 router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
   Dance.findOne({ danceId: req.query.danceId }).then((dance) => {

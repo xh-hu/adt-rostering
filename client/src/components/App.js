@@ -90,22 +90,52 @@ function App(props) {
 
   }, [googleId, myDanceIndex, myDanceName]);
 
-  function updateDanceSpecificData(updatedDancer) {
-    if (rosteredList) {
-      for (let i = 0; i < rosteredList.length; i++) {
-        if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
-          console.log("matches rosteredList" + rosteredList);
-          setRosteredList([...rosteredList.slice(0, i), updatedDancer, ...rosteredList.slice(i+1)]);
-          break;
+  function updateDanceSpecificData(updatedDancer, updatedDance, isAdding) {
+    if (updatedDance !== myDanceName) {
+      if (rosteredList) {
+        for (let i = 0; i < rosteredList.length; i++) {
+          if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
+            console.log("matches rosteredList" + rosteredList);
+            setRosteredList([...rosteredList.slice(0, i), updatedDancer, ...rosteredList.slice(i+1)]);
+            break;
+          }
+        }
+      }
+      if (dancerList) {
+        for (let i = 0; i < dancerList.length; i++) {
+          if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
+            console.log("matches dancerList" + dancerList);
+            setDancerList([...dancerList.slice(0, i), updatedDancer, ...dancerList.slice(i+1)]);
+            break;
+          }
         }
       }
     }
-    if (dancerList) {
-      for (let i = 0; i < dancerList.length; i++) {
-        if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
-          console.log("matches dancerList" + dancerList);
-          setDancerList([...dancerList.slice(0, i), updatedDancer, ...dancerList.slice(i+1)]);
-          break;
+    else {
+      if (isAdding) {
+        if (dancerList) {
+          for (let i = 0; i < dancerList.length; i++) {
+            if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
+              setDancerList([...dancerList.slice(0, i), ...dancerList.slice(i+1)]);
+              break;
+            }
+          }
+          setRosteredList([...rosteredList.slice(), updatedDancer]);
+        }
+      }
+      else {
+        if (rosteredList && myDanceIndex) {
+          for (let i = 0; i < rosteredList.length; i++) {
+            if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
+              setRosteredList([...rosteredList.slice(0, i), ...rosteredList.slice(i+1)]);
+              break;
+            }
+          }
+          const tempList = [...dancerList, updatedDancer];
+          tempList.sort(function(a, b) {
+            return a[myDanceIndex] - b[myDanceIndex];
+          })
+          setDancerList(tempList);
         }
       }
     }
@@ -126,7 +156,7 @@ function App(props) {
         get("/api/getDancer", {dancerId: data.addedDancer._id}).then((updatedDancer) => {
           if (ind !== -1) {
             setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
-            updateDanceSpecificData(updatedDancer);
+            updateDanceSpecificData(updatedDancer, data.danceName, true);
           }
         })
       }
@@ -149,7 +179,7 @@ function App(props) {
         get("/api/getDancer", { dancerId: data.removedDancer._id }).then((updatedDancer) => {
           if (ind !== -1) {
             setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
-            updateDanceSpecificData(updatedDancer);
+            updateDanceSpecificData(updatedDancer, data.danceName, false);
           }
         })
       }

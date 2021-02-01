@@ -284,7 +284,7 @@ function App(props) {
             </Router>
             <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
 
-            {allDancers ? 
+            {allDancers.length === 0 ? 
               <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
             : null}
         </>

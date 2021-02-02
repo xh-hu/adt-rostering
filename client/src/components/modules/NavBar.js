@@ -29,6 +29,12 @@ function NavBar(props) {
                 <div>{pathName === "/" ? "^" : null}</div>
               </div>
               <div className="NavBar-linkBlock">
+                <Link getProps={isActive} to="/allDances" className="NavBar-link">
+                    All Dances
+                </Link>
+                <div>{pathName === "/allDances" ? "^" : null}</div>
+              </div>
+              <div className="NavBar-linkBlock">
                 <Link getProps={isActive} to="/dance" className="NavBar-link">
                     My Dance
                 </Link>

@@ -6,6 +6,7 @@ import NavBar from "./modules/NavBar.js";
 import Dance from "./pages/Dance.js";
 import Admin from "./pages/Admin.js";
 import FullRoster from "./pages/FullRoster.js";
+import AllDances from "./pages/AllDances.js";
 
 import logo from "../public/adt_rectangle_logo.png";
 
@@ -37,10 +38,7 @@ function App(props) {
   const [dancerList, setDancerList] = useState(null);
   const [rosteredList, setRosteredList] = useState(null);
 
-  const [isLoading, setIsLoading] = useState(false);
-
   useEffect(()=> {
-    console.log("calling useEffect");
     async function getData() {
         get("/api/allDancers").then((allDancerData) => {
             setAllDancers(allDancerData);
@@ -309,6 +307,7 @@ function App(props) {
               addToDance={addToDance}
               removeFromDance={removeFromDance}/>
             : null} 
+            <AllDances path="/allDances" />
             <Admin path="/admin" />
             <NotFound default />
             </Router>

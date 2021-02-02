@@ -221,6 +221,27 @@ router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
   });
 })
 
+router.get("/getAllDances", auth.ensureLoggedIn, async (req, res) => {
+  const allDances = {};
+  const allChoreogs = await Choreog.find({})
+  const dances = await Dance.find({});
+  const danceIndToMembersMap = {};
+  for (let i = 0; i < dances.length; i++) {
+    danceIndToMembersMap[dances[i].danceId] = dances[i].members;
+  }
+  for (let i = 0; i < allChoreogs.length; i++) {
+    const currDanceName = allChoreogs[i].dance_name;
+    const currDanceIndex = allChoreogs[i].dance_index;
+    if (danceIndToMembersMap[currDanceIndex]) {
+      allDances[currDanceName] = danceIndToMembersMap[currDanceIndex];
+    }
+    else {
+      allDances[currDanceName] = [];
+    }
+  }
+  res.send(allDances);
+})
+
 router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
   Dancer.findOne({ _id: req.query.dancerId }).then((dancer) => {
     if (dancer) {
@@ -231,6 +252,12 @@ router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
     }
     
   });
+})
+
+router.get("/allChoreogs", auth.ensureLoggedIn, (req, res) => {
+  Choreog.find({}).then((data) => {
+    res.send(data);
+  })
 })
 
 router.get("/video", auth.ensureLoggedIn, (req, res) => {

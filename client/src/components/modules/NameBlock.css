@@ -6,7 +6,7 @@
   padding-top: 20px;
   padding-bottom: 20px;
   display: grid;
-  grid-template-columns: 18vw repeat(5, 12vw);
+  grid-template-columns: 16vw 18vw 10vw 10vw 8vw 12vw;
   margin-left: 5vw;
 }
 
@@ -75,6 +75,17 @@
   overflow-x: wrap;
   margin-right: 20px;
   font-weight: 400;
+}
+
+.nameBlock-name a {
+  text-decoration: none;
+  color: white;
+}
+
+.nameBlock-name img {
+  display: inline-block;
+  width: 15px;
+  padding-left: 10px;
 }
 
 .nameBlock-prefs button {

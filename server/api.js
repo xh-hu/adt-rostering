@@ -14,6 +14,7 @@ const Dancer = require("./models/dancer");
 const Choreog = require("./models/choreog");
 const User = require("./models/user");
 const Dance = require("./models/dance");
+const Video = require("./models/video");
 
 // import authentication library
 const auth = require("./auth");
@@ -230,6 +231,17 @@ router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
     }
     
   });
+})
+
+router.get("/video", auth.ensureLoggedIn, (req, res) => {
+  Video.findOne({ email: req.query.email }).then((videoDoc) => {
+    if (videoDoc) {
+      res.send(videoDoc);
+    }
+    else {
+      res.send(null);
+    }
+  })
 })
 
 // |------------------------------|

@@ -13,7 +13,7 @@
   max-width: 90vw;
   height: 60px;
   display: grid;
-  grid-template-columns: 18vw repeat(5, 12vw);
+  grid-template-columns: 16vw 18vw 10vw 10vw 8vw 12vw;
   margin-left: 10vw;
   font-weight: 400;
 }

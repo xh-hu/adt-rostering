@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { get, post } from "../../utilities.js";
+
+import star from "../../public/star_icon_white.png";
+import umbrella from "../../public/umbrella_icon_white.png";
 
 import "./NameBlock.css";
 
 function NameBlock(props) {
   const {dancer, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
+  const [tradVid, setTradVid] = useState(null);
+  const [hiphopVid, setHiphopVid] = useState(null);
+
+  useEffect(() => {
+    get("/api/video", { email: dancer.emailAddr }).then((videoData) => {
+        setTradVid(videoData.trad);
+        setHiphopVid(videoData.hiphop);
+    })
+  }, [dancer])
 
   return (
     <div className="nameBlock-container">
@@ -28,6 +41,13 @@ function NameBlock(props) {
         }
         <div className="nameBlock-name">
             {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
+            {tradVid && hiphopVid ? 
+            <>
+                <a href={tradVid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>
+                <a href={hiphopVid} alt="hiphop" title="hiphop video" target="_blank"><img src={star} /></a>
+            </>
+            : null
+            }
         </div>
         <div className="nameBlock-year">
             {dancer.year}

@@ -17,6 +17,7 @@
   font-weight: 400;
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   max-height: 4vh;
   overflow-x: hidden;
 }

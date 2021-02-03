@@ -10,8 +10,8 @@
   width: 100vw;
   text-align: center;
   margin-top: 30px;
-  margin-bottom: 60px;
   font-weight: 500;
+  margin-bottom: 30px;
   /* text-shadow: 1px 1px 3px rgb(255, 255, 255); */
 }
 
@@ -32,4 +32,5 @@
   grid-template-columns: 16vw 18vw 10vw 10vw 8vw 12vw;
   margin-left: 10vw;
   font-weight: 400;
+  margin-top: 60px;
 }

@@ -4,15 +4,24 @@
   box-shadow: 0.5px 0.5px 3px 0.5px inset rgba(255, 255, 255, 0.523);
   padding: 20px;
   height: 30vh;
+}
+
+.DanceBlock-memberContainer {
+  padding-top: 10px;
   overflow-y: scroll;
+  max-height: 23vh;
 }
 
 .DanceBlock-danceName {
   font-size: 20px;
   font-weight: 400;
+  display: flex;
+  justify-content: space-between;
+  max-height: 4vh;
+  overflow-x: hidden;
 }
 
 .DanceBlock-member {
   font-size: 15px;
-  height: 30px;
+  margin-bottom: 15px;
 }

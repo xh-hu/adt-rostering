@@ -12,6 +12,7 @@ function FullRoster(props) {
   return (
     <div className="FullRoster-container">
       <div className="FullRoster-title">Full Roster</div>
+      <div className="AllDances-description">Navigate to the "My Dance" tab to add members to your own dance.</div>
       <div className="FullRoster-header">
           <div>Audition #</div>
           <div>Name</div>

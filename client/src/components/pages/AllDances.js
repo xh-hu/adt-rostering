@@ -18,6 +18,9 @@ function AllDances(props) {
     });
 
     return (
+    <>
+    <div className="AllDances-title">Dance List</div>
+    <div className="AllDances-description">You may have to scroll to see all members of a dance.</div>
     <div className="AllDances-container">
         {allDances ? 
             Object.keys(allDances).map((danceName, i) =>
@@ -33,6 +36,7 @@ function AllDances(props) {
         : null}
         
     </div>
+    </>
     );
   
 }

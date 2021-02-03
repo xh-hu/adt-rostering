@@ -13,6 +13,10 @@ function Dance(props) {
   return (
     <div className="Dance-outer-container">
       {myDanceName ? <div className="Dance-title">My dance ({myDanceName})</div> : null}
+      <div className="AllDances-description">Click on the umbrella and sparkle icons to view audition videos.
+      <br></br>
+      Dancers are sorted by how highly they pref'd your dance!
+      </div>
       <div className="Dance-header">
             <div>Dance pref</div>
             <div>Name</div>

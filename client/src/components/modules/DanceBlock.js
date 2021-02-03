@@ -9,14 +9,18 @@ function DanceBlock(props) {
     <>
       <div className="DanceBlock-container">
         <div className="DanceBlock-danceName">
-            {danceName}
+            <div>{danceName}</div>
+            <div>{members.length}</div>
         </div>
+        <hr></hr>
         <div className="DanceBlock-memberContainer">
-            {members.map((member) => 
+            {members.length !== 0 ? members.map((member) => 
                 <div className="DanceBlock-member">
-                    {member.firstName + (member.nickname ? " (" + member.nickname + ") " : " ") + member.lastName}
+                    {member.firstName + (member.nickname ? " (" + member.nickname + ") " : " ") + member.lastName + " (" + member.year + ")"}
                 </div>
-            )}
+            ) :
+            <div>No members yet!</div>
+            }
         </div>
       </div>
     </>

@@ -242,6 +242,15 @@ router.get("/getAllDances", auth.ensureLoggedIn, async (req, res) => {
   res.send(allDances);
 })
 
+router.get("/getDanceIndexToName", auth.ensureLoggedIn, async (req, res) => {
+  const danceIndexToName = {};
+  const allChoreogs = await Choreog.find({})
+  for (let i = 0; i < allChoreogs.length; i++) {
+    danceIndexToName[allChoreogs[i].dance_index] = allChoreogs[i].dance_name;
+  }
+  res.send(danceIndexToName);
+})
+
 router.get("/getDancer", auth.ensureLoggedIn, (req, res) => {
   Dancer.findOne({ _id: req.query.dancerId }).then((dancer) => {
     if (dancer) {

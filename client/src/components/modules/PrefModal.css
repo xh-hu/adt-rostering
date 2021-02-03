@@ -13,7 +13,7 @@
 
 .PrefModal-prefModal {
   position: fixed;
-  width: 30vw;
+  width: 40vw;
   height: fit-content;
   max-height: 75vh;
   overflow-y: scroll;
@@ -21,7 +21,7 @@
   z-index: 10;
   opacity: 100%;
   top: 15vh;
-  left: 35vw;
+  left: 30vw;
   padding: 20px;
   border-radius: 20px;
   border: 1px solid gray;
@@ -29,14 +29,20 @@
   box-shadow: 1px 1px 3px 1px grey;
 }
 
+.PrefModal-individualPref {
+  height: 20px;
+  overflow: hidden;
+}
+
 .PrefModal-contentArea {
   display: flex;
   justify-content: left;
-  gap: 20%;
+  gap: 5%;
 }
 
 .PrefModal-prefs {
-  width: fit-content;
+  max-width: 60%;
+  font-size: 15px;
 }
 
 .PrefModal-comments {
@@ -45,6 +51,7 @@
   overflow-y: scroll;
   max-height: 45vh;
   font-size: 12px;
+  padding-right: 20px;
 }
 
 .PrefModal-prefModal button {

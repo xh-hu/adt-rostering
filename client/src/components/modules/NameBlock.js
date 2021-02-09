@@ -41,9 +41,14 @@ function NameBlock(props) {
         }
         <div className="nameBlock-name">
             {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
-            {tradVid && hiphopVid ? 
+            {tradVid ? 
             <>
                 <a href={tradVid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>
+            </>
+            : null
+            }
+            {hiphopVid ? 
+            <>
                 <a href={hiphopVid} alt="hiphop" title="hiphop video" target="_blank"><img src={star} /></a>
             </>
             : null

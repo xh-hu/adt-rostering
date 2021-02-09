@@ -124,7 +124,8 @@ router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
 })
 
 async function updateOtherDancesForAdd(oldDancer, updatedDancer) {
-  const otherDances = await Dance.find({members: oldDancer});
+  const otherDances = await Dance.find({"members._id": oldDancer._id});
+  console.log("found to add: " + otherDances.length);
   for (let i = 0; i < otherDances.length; i++) {
     let ind = -1;
     for (let j = 0; j < otherDances[i].members.length; j++) {
@@ -188,7 +189,8 @@ router.post("/removeFromDance", auth.ensureLoggedIn, async (req, res) => {
 })
 
 async function updateOtherDancesForRemove(oldDancer, updatedDancer) {
-  const otherDances = await Dance.find({members: oldDancer});
+  const otherDances = await Dance.find({"members._id": oldDancer._id});
+  console.log("found to remove: " + otherDances.length);
   for (let i = 0; i < otherDances.length; i++) {
     let ind = -1;
     for (let j = 0; j < otherDances[i].members.length; j++) {

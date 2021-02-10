@@ -11,6 +11,7 @@ function Dance(props) {
   const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance} = props;
 
   const [ roster, setRoster ] = useState(null);
+  const [ copied, setCopied ] = useState(false);
 
   useEffect(() => {
     setRoster(rosteredList);
@@ -39,6 +40,7 @@ function Dance(props) {
     rosteredListString = rosteredListString + nameString;
     navigator.clipboard.writeText(rosteredListString);
     console.log("Copied!");
+    setCopied(true);
   }
 
   return (
@@ -49,7 +51,7 @@ function Dance(props) {
       Dancers are sorted by how highly they pref'd your dance!
       </div>
       <div className="Dance-copyButton" onClick={() => copyToClipboard()}>
-        Copy roster to clipboard
+        {copied ? "Copied!" : "Copy roster to clipboard"}
       </div>
       <div className="Dance-header">
             <div>Dance pref</div>

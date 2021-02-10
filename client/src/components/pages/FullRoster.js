@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { get, post } from "../../utilities.js";
 import NameBlock from "../modules/NameBlock.js";
 import PrefModal from "../modules/PrefModal.js";
@@ -7,6 +7,34 @@ import "./FullRoster.css";
 
 function FullRoster(props) {
   const { allDancers, displayedDancer, displayedPrefs, toggleModal } = props;
+
+  const [sortedDancers, setSortedDancers] = useState(null);
+
+  useEffect(() => {
+    if (allDancers.length > 0 && !sortedDancers) {
+      const tempDancers = allDancers.slice();
+      console.log(tempDancers);
+      tempDancers.sort(function(a, b) {
+        let a_load;
+        let b_load;
+        try {
+          a_load = a.rosteredDances.length;
+        }
+        catch {
+          a_load = 0;
+        }
+        try {
+          b_load = b.rosteredDances.length;
+        }
+        catch {
+          b_load = 0;
+        }
+        return a_load - b_load;
+        
+      })
+      setSortedDancers(tempDancers);
+    }
+  }, [allDancers])
   
 
   return (
@@ -22,14 +50,16 @@ function FullRoster(props) {
           <div>Rostered Dances</div>
       </div>
       <div className="FullRoster-dancerBlock">
-        {allDancers.length !== 0 ? 
-          allDancers.map((dancer) => 
+        {sortedDancers ? 
+        sortedDancers.length !== 0 ? 
+          sortedDancers.map((dancer) => 
               <NameBlock
                   key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
               />
           ) : null
+          : null
         }
       </div>
       {displayedDancer ? 

@@ -34,3 +34,19 @@
   font-weight: 400;
   margin-top: 60px;
 }
+
+.Dance-copyButton {
+  max-width: 250px;
+  text-align: center;
+  border: 1px solid white;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 10px;
+  margin-left: calc(50vw - 125px);
+  margin-top: 20px;
+  margin-bottom: -20px;
+}
+
+.Dance-copyButton:hover {
+  cursor: pointer;
+}

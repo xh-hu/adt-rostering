@@ -10,12 +10,41 @@ import "./Dance.css";
 function Dance(props) {
   const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance} = props;
 
+
+
+  function copyToClipboard(event) {
+    const alphaRoster = rosteredList.slice();
+    alphaRoster.sort(function(a, b) {
+      if (a.firstName < b.firstName){
+        return -1;
+      }
+      if (a.firstName > b.firstName) {
+        return 1;
+      }
+      return 0;
+    });
+    let rosteredListString = "";
+    for (let i = 0; i < alphaRoster.length - 1; i++) {
+      const nameString = alphaRoster[i].firstName + (alphaRoster[i].nickname.length !== 0 ? " (" + alphaRoster[i].nickname + ") " : " ") + alphaRoster[i].lastName;
+      rosteredListString = rosteredListString + nameString + ", ";
+    }
+    const fi = alphaRoster.length - 1;
+    const nameString = alphaRoster[fi].firstName + (alphaRoster[fi].nickname.length !== 0 ? " (" + alphaRoster[fi].nickname + ") " : " ") + alphaRoster[fi].lastName;
+    rosteredListString = rosteredListString + nameString;
+    navigator.clipboard.writeText(rosteredListString);
+    console.log("Copied!");
+    alert("Copied to clipboard.");
+  }
+
   return (
     <div className="Dance-outer-container">
       {myDanceName ? <div className="Dance-title">My dance ({myDanceName})</div> : null}
       <div className="AllDances-description">Click on the umbrella and sparkle icons to view audition videos.
       <br></br>
       Dancers are sorted by how highly they pref'd your dance!
+      </div>
+      <div className="Dance-copyButton" onClick={copyToClipboard}>
+        Copy dancer list to clipboard
       </div>
       <div className="Dance-header">
             <div>Dance pref</div>

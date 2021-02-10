@@ -101,3 +101,13 @@
 .nameBlock-numDancesRequested {
   padding-left: 0.5vw;
 }
+
+.nameBlock-warning {
+  color: white;
+  background-color: rgba(213, 0, 0, 0.598);
+  margin-left: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border: 1px solid red;
+  border-radius: 50%;
+}

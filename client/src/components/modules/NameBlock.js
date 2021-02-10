@@ -61,14 +61,24 @@ function NameBlock(props) {
             <button onClick={() => toggleModal(dancer)}>View Prefs</button>
         </div>
         <div className="nameBlock-numDancesRequested">
+            <>
             {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
+            {dancer.rosteredDances.length > dancer.numDances ?
+                <span className="nameBlock-warning">
+                 !
+                </span>
+                : null}
+            </>
         </div>
         <div className="nameBlock-rosteredDancesContainer">
+            <>
             {dancer.rosteredDances ? 
-            dancer.rosteredDances.map((dance) => 
-                dance + " "
+            dancer.rosteredDances.slice(0, dancer.rosteredDances.length-1).map((dance) => 
+                dance + ", "
             ):
             null}
+            {dancer.rosteredDances[dancer.rosteredDances.length-1]}
+            </>
         </div>
     </div>
   );

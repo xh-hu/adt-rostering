@@ -36,13 +36,13 @@
 }
 
 .Dance-copyButton {
-  max-width: 250px;
+  max-width: 200px;
   text-align: center;
   border: 1px solid white;
   font-size: 12px;
   padding: 5px;
   border-radius: 10px;
-  margin-left: calc(50vw - 125px);
+  margin-left: calc(50vw - 100px);
   margin-top: 20px;
   margin-bottom: -20px;
 }

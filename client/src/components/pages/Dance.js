@@ -44,7 +44,7 @@ function Dance(props) {
       Dancers are sorted by how highly they pref'd your dance!
       </div>
       <div className="Dance-copyButton" onClick={copyToClipboard}>
-        Copy dancer list to clipboard
+        Copy roster to clipboard
       </div>
       <div className="Dance-header">
             <div>Dance pref</div>

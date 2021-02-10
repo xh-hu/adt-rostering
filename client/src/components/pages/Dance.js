@@ -10,10 +10,16 @@ import "./Dance.css";
 function Dance(props) {
   const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance} = props;
 
+  const [ roster, setRoster ] = useState(null);
 
+  useEffect(() => {
+    setRoster(rosteredList);
+    console.log(rosteredList);
+  }, [rosteredList])
 
-  function copyToClipboard(event) {
-    const alphaRoster = rosteredList.slice();
+  function copyToClipboard() {
+    console.log(roster);
+    const alphaRoster = roster.slice();
     alphaRoster.sort(function(a, b) {
       if (a.firstName < b.firstName){
         return -1;
@@ -33,7 +39,6 @@ function Dance(props) {
     rosteredListString = rosteredListString + nameString;
     navigator.clipboard.writeText(rosteredListString);
     console.log("Copied!");
-    alert("Copied to clipboard.");
   }
 
   return (
@@ -43,7 +48,7 @@ function Dance(props) {
       <br></br>
       Dancers are sorted by how highly they pref'd your dance!
       </div>
-      <div className="Dance-copyButton" onClick={copyToClipboard}>
+      <div className="Dance-copyButton" onClick={() => copyToClipboard()}>
         Copy roster to clipboard
       </div>
       <div className="Dance-header">

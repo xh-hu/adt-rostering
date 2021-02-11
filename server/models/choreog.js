@@ -5,6 +5,7 @@ const ChoreogSchema = new mongoose.Schema({
   email: String,
   dance_name: String,
   dance_index: String,
+  style: String,
 });
 
 module.exports = mongoose.model("choreog", ChoreogSchema);

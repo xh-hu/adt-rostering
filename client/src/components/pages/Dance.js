@@ -15,32 +15,32 @@ function Dance(props) {
 
   useEffect(() => {
     setRoster(rosteredList);
-    console.log(rosteredList);
   }, [rosteredList])
 
   function copyToClipboard() {
-    console.log(roster);
     const alphaRoster = roster.slice();
-    alphaRoster.sort(function(a, b) {
-      if (a.firstName < b.firstName){
-        return -1;
+    if (alphaRoster.length > 0) {
+      alphaRoster.sort(function(a, b) {
+        if (a.firstName < b.firstName){
+          return -1;
+        }
+        if (a.firstName > b.firstName) {
+          return 1;
+        }
+        return 0;
+      });
+      let rosteredListString = "";
+      for (let i = 0; i < alphaRoster.length - 1; i++) {
+        const nameString = alphaRoster[i].firstName + (alphaRoster[i].nickname.length !== 0 ? " (" + alphaRoster[i].nickname + ") " : " ") + alphaRoster[i].lastName;
+        rosteredListString = rosteredListString + nameString + ", ";
       }
-      if (a.firstName > b.firstName) {
-        return 1;
-      }
-      return 0;
-    });
-    let rosteredListString = "";
-    for (let i = 0; i < alphaRoster.length - 1; i++) {
-      const nameString = alphaRoster[i].firstName + (alphaRoster[i].nickname.length !== 0 ? " (" + alphaRoster[i].nickname + ") " : " ") + alphaRoster[i].lastName;
-      rosteredListString = rosteredListString + nameString + ", ";
+      const fi = alphaRoster.length - 1;
+      const nameString = alphaRoster[fi].firstName + (alphaRoster[fi].nickname.length !== 0 ? " (" + alphaRoster[fi].nickname + ") " : " ") + alphaRoster[fi].lastName;
+      rosteredListString = rosteredListString + nameString;
+      navigator.clipboard.writeText(rosteredListString);
+      console.log("Copied!");
+      setCopied(true);
     }
-    const fi = alphaRoster.length - 1;
-    const nameString = alphaRoster[fi].firstName + (alphaRoster[fi].nickname.length !== 0 ? " (" + alphaRoster[fi].nickname + ") " : " ") + alphaRoster[fi].lastName;
-    rosteredListString = rosteredListString + nameString;
-    navigator.clipboard.writeText(rosteredListString);
-    console.log("Copied!");
-    setCopied(true);
   }
 
   return (

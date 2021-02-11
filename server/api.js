@@ -73,12 +73,13 @@ router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
         { new: true}
       );
       console.log("updated Dancer: " + updatedDancer);
-      const dance = await Dance.find({ danceId: req.body.danceId })
+      const dance = await Dance.find({ danceId: req.body.danceId, style: req.body.style })
       if (dance.length === 0) {
         const newDance = new Dance({
           danceName: req.body.danceName,
           danceId: req.body.danceId,
           members: [updatedDancer],
+          style: req.body.style,
         });
         await newDance.save();
       }
@@ -102,12 +103,13 @@ router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
       { $set: {rosteredDances: [req.body.danceName]}},
       { new: true}
     )
-    const dance = await Dance.find({ danceId: req.body.danceId });
+    const dance = await Dance.find({ danceId: req.body.danceId, style: req.body.style});
     if (dance.length === 0) {
       const newDance = new Dance({
         danceName: req.body.danceName,
         danceId: req.body.danceId,
         members: [updatedDancer],
+        style: req.body.style,
       });
       await newDance.save();
     }
@@ -280,6 +282,18 @@ router.get("/video", auth.ensureLoggedIn, (req, res) => {
       res.send(null);
     }
   })
+})
+
+router.get("/hiphopCount", auth.ensureLoggedIn, async (req, res) => {
+  const dancer = await Dancer.findOne({ _id: req.query.dancerId});
+  let count = 0;
+  for (let dance of dancer.rosteredDances) {
+    const currDance = await Dance.findOne({danceName: dance});
+    if (currDance.style === "hiphop"){
+      count = count + 1;
+    }
+  }
+  res.send({hiphopCount: count});
 })
 
 // |------------------------------|

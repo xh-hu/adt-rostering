@@ -11,10 +11,15 @@ function NameBlock(props) {
   const [tradVid, setTradVid] = useState(null);
   const [hiphopVid, setHiphopVid] = useState(null);
 
+  const [numHipHop, setNumHipHop] = useState(0);
+
   useEffect(() => {
     get("/api/video", { email: dancer.emailAddr }).then((videoData) => {
         setTradVid(videoData.trad);
         setHiphopVid(videoData.hiphop);
+    })
+    get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
+        setNumHipHop(hiphopCount.hiphopCount);
     })
   }, [dancer])
 
@@ -64,7 +69,7 @@ function NameBlock(props) {
             <>
             {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
             {dancer.rosteredDances.length > dancer.numDances ?
-                <span className="nameBlock-warning">
+                <span title="Over requested quota" className="nameBlock-warning">
                  !
                 </span>
                 : null}
@@ -78,6 +83,11 @@ function NameBlock(props) {
             ):
             null}
             {dancer.rosteredDances[dancer.rosteredDances.length-1]}
+            {numHipHop > 3 ?
+                <span title="More than 3 hiphop dances!" className="nameBlock-warning">
+                 !
+                </span>
+                : null}
             </>
         </div>
     </div>

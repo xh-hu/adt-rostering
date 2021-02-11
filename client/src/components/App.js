@@ -29,6 +29,7 @@ function App(props) {
   const [name, setName] = useState(null);
   const [myDanceName, setMyDanceName] = useState(null);
   const [myDanceIndex, setMyDanceIndex] = useState(null);
+  const [myStyle, setMyStyle] = useState(null);
 
   const [allDancers, setAllDancers] = useState([]);
   const [modalOpen, toggleModalState] = useState(false);
@@ -81,12 +82,13 @@ function App(props) {
             setName(user.name);
             setMyDanceName(choreog.dance_name);
             setMyDanceIndex(choreog.dance_index);
+            setMyStyle(choreog.style);
           })
         }
       });
     }
 
-  }, [googleId, myDanceIndex, myDanceName]);
+  }, [googleId, myDanceIndex, myDanceName, myStyle]);
 
   function updateDanceSpecificData(updatedDancer, updatedDance, isAdding) {
     if (updatedDance !== myDanceName) {
@@ -196,6 +198,7 @@ function App(props) {
         console.log("Welcome choreographer " + res.profileObj.name);
         setMyDanceName(choreog.dance_name);
         setMyDanceIndex(choreog.dance_index);
+        setMyStyle(choreog.style);
       })
     });
   };
@@ -243,7 +246,7 @@ function App(props) {
   }
 
   function addToDance(addingDancer) {
-    post("/api/addToDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer}).then((dancer) => {
+    post("/api/addToDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer, style: myStyle}).then((dancer) => {
       setRosteredList([ ...rosteredList, dancer]);
       const ind = dancerList.indexOf(addingDancer);
       if (ind !== -1) {

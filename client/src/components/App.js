@@ -31,7 +31,8 @@ function App(props) {
   const [myDanceIndex, setMyDanceIndex] = useState(null);
   const [myStyle, setMyStyle] = useState(null);
 
-  const [allDancers, setAllDancers] = useState([]);
+  // const [sortedDancers, setSortedDancers] = useState([]);
+  const [sortedDancers, setSortedDancers] = useState(null);
   const [modalOpen, toggleModalState] = useState(false);
   const [displayedDancer, setDancer] = useState(null);
   const [displayedPrefs, setPrefs] = useState([]);
@@ -42,7 +43,26 @@ function App(props) {
   useEffect(()=> {
     async function getData() {
         get("/api/allDancers").then((allDancerData) => {
-            setAllDancers(allDancerData);
+          const tempDancers = allDancerData.slice();
+          tempDancers.sort(function(a, b) {
+            let a_load;
+            let b_load;
+            try {
+              a_load = a.rosteredDances.length;
+            }
+            catch {
+              a_load = 0;
+            }
+            try {
+              b_load = b.rosteredDances.length;
+            }
+            catch {
+              b_load = 0;
+            }
+            return a_load - b_load;  
+            })
+            setSortedDancers(tempDancers);
+            // setSortedDancers(allDancerData);
             if (myDanceIndex) {
               get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
                 myDancerData.sort(function(a, b) {
@@ -71,7 +91,7 @@ function App(props) {
         });
     }
 
-    if (allDancers.length == 0 && googleId) {
+    if (!sortedDancers && googleId) {
         getData();
     }
     else {
@@ -95,7 +115,6 @@ function App(props) {
       if (rosteredList) {
         for (let i = 0; i < rosteredList.length; i++) {
           if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
-            console.log("matches rosteredList" + rosteredList);
             setRosteredList([...rosteredList.slice(0, i), updatedDancer, ...rosteredList.slice(i+1)]);
             break;
           }
@@ -104,7 +123,6 @@ function App(props) {
       if (dancerList) {
         for (let i = 0; i < dancerList.length; i++) {
           if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
-            console.log("matches dancerList" + dancerList);
             setDancerList([...dancerList.slice(0, i), updatedDancer, ...dancerList.slice(i+1)]);
             break;
           }
@@ -147,15 +165,15 @@ function App(props) {
       console.log(data.name + " making changes");
       if (data.name !== name) {
         let ind = -1;
-        for (let i = 0; i < allDancers.length; i++) {
-          if (allDancers[i]._id == data.addedDancer._id) {
+        for (let i = 0; i < sortedDancers.length; i++) {
+          if (sortedDancers[i]._id.toString() == data.addedDancer._id.toString()) {
             ind = i;
             break;
           }
         } 
         get("/api/getDancer", {dancerId: data.addedDancer._id}).then((updatedDancer) => {
           if (ind !== -1) {
-            setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+            setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
             updateDanceSpecificData(updatedDancer, data.danceName, true);
           }
         })
@@ -170,15 +188,15 @@ function App(props) {
     socket.once("removeDancerFromDance", (data) => {
       if (data.name !== name) {
         let ind = -1;
-        for (let i = 0; i < allDancers.length; i++) {
-          if (allDancers[i]._id == data.removedDancer._id) {
+        for (let i = 0; i < sortedDancers.length; i++) {
+          if (sortedDancers[i]._id == data.removedDancer._id) {
             ind = i;
             break;
           }
         } 
         get("/api/getDancer", { dancerId: data.removedDancer._id }).then((updatedDancer) => {
           if (ind !== -1) {
-            setAllDancers([...allDancers.slice(0, ind), updatedDancer, ...allDancers.slice(ind+1)]);
+            setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
             updateDanceSpecificData(updatedDancer, data.danceName, false);
           }
         })
@@ -252,9 +270,15 @@ function App(props) {
       if (ind !== -1) {
         setDancerList([...dancerList.slice(0, ind), ...dancerList.slice(ind+1)])   
       }
-      const ind2 = allDancers.indexOf(addingDancer);
+      let ind2 = -1;
+      for (let d of sortedDancers) {
+        if (d._id == addingDancer._id) {
+          ind2 = sortedDancers.indexOf(d);
+          break;
+        }
+      }
       if (ind2 !== -1) {
-        setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+        setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
     });
   }
@@ -270,13 +294,18 @@ function App(props) {
       if (ind !== -1) {
         setRosteredList([...rosteredList.slice(0, ind), ...rosteredList.slice(ind+1)]);
       }
-      const ind2 = allDancers.indexOf(removingDancer);
+      let ind2 = -1;
+      for (let d of sortedDancers) {
+        if (d._id == removingDancer._id) {
+          ind2 = sortedDancers.indexOf(d);
+          break;
+        }
+      }
       if (ind2 !== -1) {
-        setAllDancers([... allDancers.slice(0, ind2), dancer, ...allDancers.slice(ind2+1)]);
+        setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
     });
   }
-
 
 
     return (
@@ -291,13 +320,14 @@ function App(props) {
         {googleId ? (
           <>
             <Router>
+            {sortedDancers ? 
             <FullRoster 
               path="/"
-              allDancers={allDancers}
+              allDancers={sortedDancers}
               displayedDancer={displayedDancer}
               displayedPrefs={displayedPrefs}
               toggleModal={toggleModal}
-            /> 
+            /> : null}
             { rosteredList && dancerList && myDanceName && myDanceIndex ? 
             <Dance path="/dance"
               rosteredList={rosteredList}
@@ -316,7 +346,7 @@ function App(props) {
             </Router>
             <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
 
-            {allDancers.length === 0 ? 
+            {!sortedDancers ? 
               <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
             : null}
         </>

@@ -12,6 +12,7 @@
 }
 
 .PrefModal-prefModal {
+  font-weight: 400;
   position: fixed;
   width: 40vw;
   height: fit-content;
@@ -35,9 +36,9 @@
 }
 
 .PrefModal-contentArea {
-  display: flex;
-  justify-content: left;
-  gap: 5%;
+  display: grid;
+  grid-template-columns: 5fr 5fr;
+  gap: 20px;
 }
 
 .PrefModal-prefs {
@@ -46,7 +47,6 @@
 }
 
 .PrefModal-comments {
-  max-width: 40%;
   overflow-x: wrap;
   overflow-y: scroll;
   max-height: 45vh;

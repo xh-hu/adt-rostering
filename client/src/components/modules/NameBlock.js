@@ -41,7 +41,8 @@ function NameBlock(props) {
             </>
             :
             <div className="nameBlock-auditionNum">
-                {dancer.auditionNum}
+                {/* {dancer.auditionNum} */}
+                {dancer.emailAddr}
             </div>
         }
         <div className="nameBlock-numDancesRequested">

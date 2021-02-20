@@ -23,7 +23,7 @@ function PrefModal(props) {
           <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
         : 
       <div className="PrefModal-prefModal">
-        <b>Prefs for {displayedDancer.firstName}</b>
+        <b>Prefs for {displayedDancer.firstName} ({displayedDancer.emailAddr})</b>
         <hr></hr>
         <div className="PrefModal-contentArea">
             <div className="PrefModal-prefs">

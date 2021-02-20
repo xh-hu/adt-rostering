@@ -14,10 +14,10 @@ function FullRoster(props) {
       <div className="AllDances-description">Navigate to the "My Dance" tab to add members to your own dance.</div>
       <div className="FullRoster-header">
           <div>Audition #</div>
+          <div>Quota</div>
           <div>Name</div>
           <div>Year</div>
           <div>Prefs</div>
-          <div>Quota</div>
           <div>Rostered Dances</div>
       </div>
       <div className="FullRoster-dancerBlock">

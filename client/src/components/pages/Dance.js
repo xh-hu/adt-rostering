@@ -52,10 +52,10 @@ function Dance(props) {
       </div>
       <div className="Dance-header">
             <div>Dance pref</div>
+            <div>Quota</div>
             <div>Name</div>
             <div>Year</div>
             <div>Prefs</div>
-            <div>Quota</div>
             <div>Rostered Dances</div>
       </div>
       <div className="Dance-container">

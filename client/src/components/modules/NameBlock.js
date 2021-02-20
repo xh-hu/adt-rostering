@@ -44,6 +44,16 @@ function NameBlock(props) {
                 {dancer.auditionNum}
             </div>
         }
+        <div className="nameBlock-numDancesRequested">
+            <>
+            {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
+            {dancer.rosteredDances.length > dancer.numDances ?
+                <span title="Over requested quota" className="nameBlock-warning">
+                 !
+                </span>
+                : null}
+            </>
+        </div>
         <div className="nameBlock-name">
             {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
             {tradVid ? 
@@ -64,16 +74,6 @@ function NameBlock(props) {
         </div>
         <div className="nameBlock-prefs">
             <button onClick={() => toggleModal(dancer)}>View Prefs</button>
-        </div>
-        <div className="nameBlock-numDancesRequested">
-            <>
-            {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
-            {dancer.rosteredDances.length > dancer.numDances ?
-                <span title="Over requested quota" className="nameBlock-warning">
-                 !
-                </span>
-                : null}
-            </>
         </div>
         <div className="nameBlock-rosteredDancesContainer">
             <>

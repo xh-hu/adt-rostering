@@ -10,6 +10,9 @@ function ScheduleBlock(props) {
       if (claimers.includes(choreogName)) {
           setClaimed(true);
       }
+      else {
+          setClaimed(false);
+      }
   })
 
   return (

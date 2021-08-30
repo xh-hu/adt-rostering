@@ -7,6 +7,7 @@ import Dance from "./pages/Dance.js";
 import Admin from "./pages/Admin.js";
 import FullRoster from "./pages/FullRoster.js";
 import AllDances from "./pages/AllDances.js";
+import Scheduling from "./pages/Scheduling.js";
 
 import logo from "../public/adt_rectangle_logo.png";
 
@@ -37,8 +38,8 @@ function App(props) {
   const [displayedDancer, setDancer] = useState(null);
   const [displayedPrefs, setPrefs] = useState([]);
 
-  const [dancerList, setDancerList] = useState(null);
-  const [rosteredList, setRosteredList] = useState(null);
+  const [dancerList, setDancerList] = useState(null); // dancers that are NOT rostered into my dance
+  const [rosteredList, setRosteredList] = useState(null); // dancers that are rostered into my dance
 
   useEffect(()=> {
     async function getData() {
@@ -62,7 +63,6 @@ function App(props) {
             return a_load - b_load;  
             })
             setSortedDancers(tempDancers);
-            // setSortedDancers(allDancerData);
             if (myDanceIndex) {
               get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
                 myDancerData.sort(function(a, b) {
@@ -236,7 +236,7 @@ function App(props) {
         toggleModalState(true);
         let tempPrefs = [];
         setDancer(dancer);
-        tempPrefs = [ /** Change this to have actual dance names */
+        tempPrefs = [
             [0, dancer.dance_0],
             [1, dancer.dance_1],
             [2, dancer.dance_2],
@@ -341,6 +341,7 @@ function App(props) {
               removeFromDance={removeFromDance}/>
             : null} 
             <AllDances path="/allDances" />
+            <Scheduling path="/scheduling" rosteredList={rosteredList} choreogName={name}/>
             <Admin path="/admin" />
             <NotFound default />
             </Router>

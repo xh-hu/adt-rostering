@@ -1,0 +1,68 @@
+.Scheduling-container {
+  height: 2000px;
+  width: 100vw;
+  color: rgb(235, 235, 235);
+}
+
+.Scheduling-title {
+  font-size: 30px;
+  font-weight: 700;
+  width: 100vw;
+  text-align: center;
+  margin-top: 30px;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+.Scheduling-calendar-section {
+    width: 84vw;
+    height: 1500px;
+    margin-left: 8vw;
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(7, 12vw);
+    margin-bottom: 100px;
+}
+
+.Scheduling-calendar-column div{
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.Scheduling-time-row {
+    width: 80vw;
+    height: 100px;
+    margin-left: 10vw;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(8, 10vw);
+}
+
+.Scheduling-good {
+    color: white;
+    background-color: rgba(2, 154, 2, 0.283);
+    margin-left: 8px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid green;
+    border-radius: 50%;
+} 
+
+
+.Scheduling-bad {
+  color: white;
+  background-color: rgba(193, 106, 1, 0.598);
+  margin-left: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border: 1px solid rgb(255, 153, 0);
+  border-radius: 50%;
+} 
+
+.Scheduling-description {
+  color: lightgrey;
+  font-size: 14px;
+  width: 70vw;
+  text-align: center;
+  margin-left: 15vw;
+}

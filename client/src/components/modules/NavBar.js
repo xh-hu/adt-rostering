@@ -40,6 +40,12 @@ function NavBar(props) {
                 </Link>
                 <div>{pathName === "/dance" ? "^" : null}</div>
               </div>
+              <div className="NavBar-linkBlock">
+                <Link getProps={isActive} to="/scheduling" className="NavBar-link">
+                    Scheduling
+                </Link>
+                <div>{pathName === "/scheduling" ? "^" : null}</div>
+              </div>
             </div>
             <GoogleLogout
                 clientId={GOOGLE_CLIENT_ID}

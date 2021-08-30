@@ -1,0 +1,38 @@
+.ScheduleBlock-container {
+    width: 10vw;
+    height: 100x;
+    border: 1px solid white;
+    font-size: 12px;
+    padding: 5px;
+}
+
+.ScheduleBlock-claimButtonNoConflict {
+    width: fit-content;
+    color: white;
+    background-color: rgba(2, 154, 2, 0.283);
+    margin-left: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border: 1px solid green;
+    border-radius: 10px;
+}
+
+.ScheduleBlock-claimButtonWithConflict {
+    width: fit-content;
+    color: white;
+    background-color: rgba(193, 106, 1, 0.598);
+    margin-left: 2px;
+    padding: 3px;
+    border: 1px solid rgb(255, 153, 0);
+    border-radius: 10px;
+}
+
+.ScheduleBlock-claimButtonNoConflict:hover {
+    cursor: pointer;
+}
+
+.ScheduleBlock-claimButtonWithConflict:hover {
+    cursor: pointer;
+}

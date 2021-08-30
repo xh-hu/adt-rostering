@@ -28,6 +28,15 @@ const DancerSchema = new mongoose.Schema({
   dance_16: Number,
   dance_17: Number,
   comments: String,
+  monday: String,
+  tuesday: String,
+  wednesday: String,
+  thursday: String,
+  friday: String,
+  saturday: String,
+  sunday: String,
+  trad_video: String,
+  hiphop_video: String,
   rosteredDances: Array,
 });
 

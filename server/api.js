@@ -1,25 +1,14 @@
-/*
-|--------------------------------------------------------------------------
-| api.js -- server routes
-|--------------------------------------------------------------------------
-|
-| This file defines the routes for your server.
-|
-*/
 
 const express = require("express");
 
-// import models so we can interact with the database
 const Dancer = require("./models/dancer");
 const Choreog = require("./models/choreog");
 const User = require("./models/user");
 const Dance = require("./models/dance");
-const Video = require("./models/video");
+const Schedule = require("./models/schedule");
 
-// import authentication library
 const auth = require("./auth");
 
-// api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
 
 const socketManager = require("./server-socket");
@@ -273,34 +262,68 @@ router.get("/allChoreogs", auth.ensureLoggedIn, (req, res) => {
   })
 })
 
-router.get("/video", auth.ensureLoggedIn, (req, res) => {
-  Video.findOne({ email: req.query.email }).then((videoDoc) => {
-    if (videoDoc) {
-      res.send(videoDoc);
-    }
-    else {
-      res.send(null);
-    }
-  })
-})
-
 router.get("/hiphopCount", auth.ensureLoggedIn, async (req, res) => {
   const dancer = await Dancer.findOne({ _id: req.query.dancerId});
   let count = 0;
-  for (let dance of dancer.rosteredDances) {
-    const currDance = await Dance.findOne({danceName: dance});
-    if (currDance.style === "hiphop"){
-      count = count + 1;
+  if (dancer.rosteredDances) {
+    for (let dance of dancer.rosteredDances) {
+      const currDance = await Dance.findOne({danceName: dance});
+      if (currDance.style === "hiphop"){
+        count = count + 1;
+      }
     }
   }
   res.send({hiphopCount: count});
 })
 
-// |------------------------------|
-// | write your API methods below!|
-// |------------------------------|
+router.get("/timeslots", auth.ensureLoggedIn, async (req, res) => {
+  Schedule.find({}).then((data) => {
+    res.send(data);
+  })
+})
 
-// anything else falls to this "not found" case
+router.post("/claimSlot", auth.ensureLoggedIn, async (req, res) => {
+  const slot = await Schedule.findOne({day: req.body.day, time: req.body.time, location: req.body.location});
+  if (slot.claimers == null) {
+    await Schedule.updateOne(
+      { day: req.body.day , time: req.body.time, location: req.body.location},
+      { $set: {claimers: [req.body.choreogName] }}
+    );
+  }
+  else {
+    await Schedule.updateOne(
+      { day: req.body.day , time: req.body.time, location: req.body.location},
+      { $push: {claimers: req.body.choreogName }}
+    )
+  }
+  const updatedSlot = await Schedule.findOne({day: req.body.day, time: req.body.time, location: req.body.location});
+  await socketManager.getIo().emit("claimSlot", {name: req.body.choreogName, slot: updatedSlot});
+  res.send(slot);
+})
+
+router.post("/unclaimSlot", auth.ensureLoggedIn, async (req, res) => {
+  const slot = await Schedule.findOne({day: req.body.day, time: req.body.time, location: req.body.location});
+  if (slot.claimers != null && slot.claimers.includes(req.body.choreogName)) {
+    let ind = -1;
+    for (let i = 0; i < slot.claimers.length; i++) {
+      if (slot.claimers[i].toString() === req.body.choreogName.toString()) {
+        ind = i;
+        break;
+      }
+    }
+    if (ind !== -1) {
+      const tempList = [...slot.claimers.slice(0, ind), ...slot.claimers.slice(ind+1)];
+      await Schedule.updateOne(
+        { day: req.body.day , time: req.body.time, location: req.body.location},
+        { $set: {claimers: tempList }}
+      );
+    }
+  }
+  const updatedSlot = await Schedule.findOne({day: req.body.day, time: req.body.time, location: req.body.location});
+  await socketManager.getIo().emit("unclaimSlot", {name: req.body.choreogName, slot: updatedSlot});
+  res.send(slot);
+})
+
 router.all("*", (req, res) => {
   console.log(`API route not found: ${req.method} ${req.url}`);
   res.status(404).send({ msg: "API route not found" });

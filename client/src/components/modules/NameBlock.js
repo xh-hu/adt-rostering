@@ -8,16 +8,10 @@ import "./NameBlock.css";
 
 function NameBlock(props) {
   const {dancer, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
-  const [tradVid, setTradVid] = useState(null);
-  const [hiphopVid, setHiphopVid] = useState(null);
 
   const [numHipHop, setNumHipHop] = useState(0);
 
   useEffect(() => {
-    get("/api/video", { email: dancer.emailAddr }).then((videoData) => {
-        setTradVid(videoData.trad);
-        setHiphopVid(videoData.hiphop);
-    })
     get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
         setNumHipHop(hiphopCount.hiphopCount);
     })
@@ -57,15 +51,15 @@ function NameBlock(props) {
         </div>
         <div className="nameBlock-name">
             {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
-            {tradVid ? 
+            {dancer.trad_vid !== '' ? 
             <>
-                <a href={tradVid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>
+                <a href={dancer.trad_vid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>
             </>
             : null
             }
-            {hiphopVid ? 
+            {dancer.hiphop_vid !== '' ? 
             <>
-                <a href={hiphopVid} alt="hiphop" title="hiphop video" target="_blank"><img src={star} /></a>
+                <a href={dancer.hiphop_vid} alt="hiphop" title="hiphop video" target="_blank"><img src={star} /></a>
             </>
             : null
             }

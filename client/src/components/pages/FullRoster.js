@@ -13,7 +13,7 @@ function FullRoster(props) {
       <div className="FullRoster-title">Full Roster</div>
       <div className="AllDances-description">Navigate to the "My Dance" tab to add members to your own dance.</div>
       <div className="FullRoster-header">
-          <div>Email</div>
+          <div>Audition #</div>
           <div>Quota</div>
           <div>Name</div>
           <div>Year</div>

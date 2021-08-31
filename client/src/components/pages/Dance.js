@@ -16,6 +16,7 @@ function Dance(props) {
   }, [rosteredList])
 
   function copyToClipboard() {
+    console.log(roster);
     const alphaRoster = roster.slice();
     if (alphaRoster.length > 0) {
       alphaRoster.sort(function(a, b) {
@@ -29,7 +30,7 @@ function Dance(props) {
       });
       let rosteredListString = "";
       for (let i = 0; i < alphaRoster.length - 1; i++) {
-        const nameString = alphaRoster[i].firstName + (alphaRoster[i].nickname.length !== 0 ? " (" + alphaRoster[i].nickname + ") " : " ") + alphaRoster[i].lastName;
+        const nameString = alphaRoster[i].firstName + (alphaRoster[i].nickname != null && alphaRoster[i].nickname.length !== 0 ? " (" + alphaRoster[i].nickname + ") " : " ") + alphaRoster[i].lastName;
         rosteredListString = rosteredListString + nameString + ", ";
       }
       const fi = alphaRoster.length - 1;

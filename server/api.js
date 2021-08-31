@@ -138,6 +138,10 @@ async function updateOtherDancesForAdd(oldDancer, updatedDancer) {
 router.post("/removeFromDance", auth.ensureLoggedIn, async (req, res) => {
   const dancer = await Dancer.findOne({_id: req.body.dancer._id});
   let ind = -1;
+  if (dancer == null) {
+    res.status(404).send({ msg: "Dancer not found" });
+    return;
+  }
   for (let i = 0; i < dancer.rosteredDances.length; i++) {
     if (dancer.rosteredDances[i].toString() === req.body.danceName.toString()) {
       ind = i;
@@ -265,7 +269,7 @@ router.get("/allChoreogs", auth.ensureLoggedIn, (req, res) => {
 router.get("/hiphopCount", auth.ensureLoggedIn, async (req, res) => {
   const dancer = await Dancer.findOne({ _id: req.query.dancerId});
   let count = 0;
-  if (dancer.rosteredDances) {
+  if (dancer != null && dancer.rosteredDances) {
     for (let dance of dancer.rosteredDances) {
       const currDance = await Dance.findOne({danceName: dance});
       if (currDance.style === "hiphop"){

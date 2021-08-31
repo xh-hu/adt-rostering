@@ -35,7 +35,6 @@ function NameBlock(props) {
             </>
             :
             <div className="nameBlock-auditionNum">
-                {/* {dancer.auditionNum} */}
                 {dancer.emailAddr}
             </div>
         }
@@ -50,7 +49,7 @@ function NameBlock(props) {
             </>
         </div>
         <div className="nameBlock-name">
-            {dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName}
+            {dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName + " #" + dancer.auditionNum}
             {dancer.trad_vid !== '' ? 
             <>
                 <a href={dancer.trad_vid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>

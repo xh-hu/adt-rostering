@@ -23,38 +23,38 @@ function Scheduling(props) {
     async function getConflicts() {
       for (let i = 0; i < rosteredList.length; i++) {
           const dancer = rosteredList[i];
-          const dancerName = dancer.firstName + (dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName;
-          const sundayConflicts = dancer.sunday.length !== 0 ? dancer.sunday.split(" ") : [];
+          const dancerName = dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName;
+          const sundayConflicts = dancer.sunday != null && dancer.sunday.length !== 0 ? dancer.sunday.split(" ") : [];
           for (let j = 0; j < sundayConflicts.length; j++) {
               const c = sundayConflicts[j];
               conflicts["sunday"][c] = conflicts["sunday"][c].concat([dancerName])
           }
-          const mondayConflicts = dancer.monday.length !== 0 ? dancer.monday.split(" "): [];
+          const mondayConflicts = dancer.monday != null && dancer.monday.length !== 0 ? dancer.monday.split(" "): [];
           for (let j = 0; j < mondayConflicts.length; j++) {
               const c = mondayConflicts[j];
               conflicts["monday"][c] = conflicts["monday"][c].concat([dancerName])
           }
-          const tuesdayConflicts = dancer.tuesday.length !== 0 ? dancer.tuesday.split(" "): [];
+          const tuesdayConflicts = dancer.tuesday != null && dancer.tuesday.length !== 0 ? dancer.tuesday.split(" "): [];
           for (let j = 0; j < tuesdayConflicts.length; j++) {
               const c = tuesdayConflicts[j];
               conflicts["tuesday"][c] = conflicts["tuesday"][c].concat([dancerName])
           }
-          const wednesdayConflicts = dancer.wednesday.length !== 0 ? dancer.wednesday.split(" ") : [];
+          const wednesdayConflicts = dancer.wednesday != null && dancer.wednesday.length !== 0 ? dancer.wednesday.split(" ") : [];
           for (let j = 0; j < wednesdayConflicts.length; j++) {
               const c = wednesdayConflicts[j];
               conflicts["wednesday"][c] = conflicts["wednesday"][c].concat([dancerName])
           }
-          const thursdayConflicts = dancer.thursday.length !== 0 ? dancer.thursday.split(" ") : [];
+          const thursdayConflicts = dancer.thursday != null && dancer.thursday.length !== 0 ? dancer.thursday.split(" ") : [];
           for (let j = 0; j < thursdayConflicts.length; j++) {
               const c = thursdayConflicts[j];
               conflicts["thursday"][c] = conflicts["thursday"][c].concat([dancerName])
           }
-          const fridayConflicts = dancer.friday.length !== 0 ? dancer.friday.split(" ") : [];
+          const fridayConflicts = dancer.friday != null && dancer.friday.length !== 0 ? dancer.friday.split(" ") : [];
           for (let j = 0; j < fridayConflicts.length; j++) {
               const c = fridayConflicts[j];
               conflicts["friday"][c] = conflicts["friday"][c].concat([dancerName])
           }
-          const saturdayConflicts = dancer.saturday.length !== 0 ? dancer.saturday.split(" ") : [];
+          const saturdayConflicts = dancer.saturday != null && dancer.saturday.length !== 0 ? dancer.saturday.split(" ") : [];
           for (let j = 0; j < saturdayConflicts.length; j++) {
               const c = saturdayConflicts[j];
               conflicts["saturday"][c] = conflicts["saturday"][c].concat([dancerName])

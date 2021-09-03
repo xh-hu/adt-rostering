@@ -19,7 +19,7 @@ function ScheduleBlock(props) {
     <>
       <div className="ScheduleBlock-container">
           <div>{time} : {location}</div>
-          <div>Claimed by: {claimers}</div>
+          {claimers.length > 0 ? <div>Claimed by: {claimers.join(", ")}</div> : null}
           {conflicts.length === 0 ? 
             <div className="ScheduleBlock-claimButtonNoConflict" onClick={() => claimFunction(day, time, location, claimers)}>
                 <span title={"No conflicts!"}>{claimed ? "Unclaim" : "Claim"}</span>

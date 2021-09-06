@@ -272,7 +272,7 @@ router.get("/hiphopCount", auth.ensureLoggedIn, async (req, res) => {
   if (dancer != null && dancer.rosteredDances) {
     for (let dance of dancer.rosteredDances) {
       const currDance = await Dance.findOne({danceName: dance});
-      if (currDance.style === "hiphop"){
+      if (currDance != null && currDance.style === "hiphop"){
         count = count + 1;
       }
     }

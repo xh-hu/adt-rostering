@@ -14,7 +14,7 @@
 .PrefModal-prefModal {
   font-weight: 400;
   position: fixed;
-  width: 40vw;
+  width: 60vw;
   height: fit-content;
   max-height: 75vh;
   overflow-y: scroll;
@@ -22,7 +22,7 @@
   z-index: 10;
   opacity: 100%;
   top: 15vh;
-  left: 30vw;
+  left: 20vw;
   padding: 20px;
   border-radius: 20px;
   border: 1px solid gray;
@@ -32,12 +32,14 @@
 
 .PrefModal-individualPref {
   height: 20px;
-  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
 }
 
 .PrefModal-contentArea {
   display: grid;
-  grid-template-columns: 5fr 5fr;
+  grid-template-columns: 7fr 5fr;
   gap: 20px;
 }
 

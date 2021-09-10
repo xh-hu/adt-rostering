@@ -34,7 +34,7 @@ function Dance(props) {
         rosteredListString = rosteredListString + nameString + ", ";
       }
       const fi = alphaRoster.length - 1;
-      const nameString = alphaRoster[fi].firstName + (alphaRoster[fi].nickname.length !== 0 ? " (" + alphaRoster[fi].nickname + ") " : " ") + alphaRoster[fi].lastName;
+      const nameString = alphaRoster[fi].firstName + (alphaRoster[fi].nickname != null && alphaRoster[fi].nickname.length !== 0 ? " (" + alphaRoster[fi].nickname + ") " : " ") + alphaRoster[fi].lastName;
       rosteredListString = rosteredListString + nameString;
       navigator.clipboard.writeText(rosteredListString);
       console.log("Copied!");

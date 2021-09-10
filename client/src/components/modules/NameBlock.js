@@ -50,13 +50,13 @@ function NameBlock(props) {
         </div>
         <div className="nameBlock-name">
             {dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName + " #" + dancer.auditionNum}
-            {dancer.trad_vid !== '' ? 
+            {dancer.trad_vid !== '' && dancer.trad_vid != null ? 
             <>
                 <a href={dancer.trad_vid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>
             </>
             : null
             }
-            {dancer.hiphop_vid !== '' ? 
+            {dancer.hiphop_vid !== '' && dancer.hiphop_vid != null ? 
             <>
                 <a href={dancer.hiphop_vid} alt="hiphop" title="hiphop video" target="_blank"><img src={star} /></a>
             </>

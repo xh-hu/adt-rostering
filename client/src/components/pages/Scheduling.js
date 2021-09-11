@@ -11,13 +11,13 @@ function Scheduling(props) {
   const [finished, setFinished] = useState(false);
   const [timeslots, setTimeslots] = useState([]);
   
-  const [conflicts] = useState({"sunday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []},
-    "monday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
-    "tuesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
-    "wednesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
-    "thursday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
-    "friday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []},
-    "saturday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}});
+  const [conflicts] = useState({"sunday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []},
+    "monday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []}, 
+    "tuesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []}, 
+    "wednesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []}, 
+    "thursday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []}, 
+    "friday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []},
+    "saturday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": [], "11p": []}});
     
   useEffect(() => {
     async function getConflicts() {
@@ -27,6 +27,7 @@ function Scheduling(props) {
           const sundayConflicts = dancer.sunday != null && dancer.sunday.length !== 0 ? dancer.sunday.split(" ") : [];
           for (let j = 0; j < sundayConflicts.length; j++) {
               const c = sundayConflicts[j];
+              console.log(c);
               conflicts["sunday"][c] = conflicts["sunday"][c].concat([dancerName])
           }
           const mondayConflicts = dancer.monday != null && dancer.monday.length !== 0 ? dancer.monday.split(" "): [];

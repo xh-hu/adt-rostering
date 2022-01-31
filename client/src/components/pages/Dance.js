@@ -6,17 +6,17 @@ import "./Dance.css";
 
 
 function Dance(props) {
-  const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance} = props;
+  const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance, makingChanges} = props;
 
   const [ roster, setRoster ] = useState(null);
   const [ copied, setCopied ] = useState(false);
+  const [ copiedEmails, setCopiedEmails ] = useState(false);
 
   useEffect(() => {
     setRoster(rosteredList);
   }, [rosteredList])
 
   function copyToClipboard() {
-    console.log(roster);
     const alphaRoster = roster.slice();
     if (alphaRoster.length > 0) {
       alphaRoster.sort(function(a, b) {
@@ -41,15 +41,35 @@ function Dance(props) {
       setCopied(true);
     }
   }
+
+  function copyEmailsToClipboard() {
+    const alphaRoster = roster.slice();
+    if (alphaRoster.length > 0) {
+      let rosteredListString = "";
+      for (let i = 0; i < alphaRoster.length; i++) {
+        rosteredListString = rosteredListString + alphaRoster[i].emailAddr + "\n";
+      }
+      navigator.clipboard.writeText(rosteredListString);
+      console.log("Copied emails!");
+      setCopiedEmails(true);
+    }
+    
+  }
   return (
     <div className="Dance-outer-container">
       {myDanceName ? <div className="Dance-title">My dance ({myDanceName})</div> : null}
+      <div className="Dance-subtitle">Currently rostered: {rosteredList.length}</div>
       <div className="AllDances-description">Click on the umbrella and sparkle icons to view audition videos.
       <br></br>
       Dancers are sorted by how highly they pref'd your dance!
       </div>
-      <div className="Dance-copyButton" onClick={() => copyToClipboard()}>
-        {copied ? "Copied!" : "Copy roster to clipboard"}
+      <div className="Dance-copyButtonGroup">
+        <div className="Dance-copyButton" onClick={() => copyToClipboard()}>
+          {copied ? "Copied!" : "Copy roster to clipboard"}
+        </div>
+        <div className="Dance-copyButton" onClick={() => copyEmailsToClipboard()}>
+          {copiedEmails ? "Copied!" : "Copy emails to clipboard"}
+        </div>
       </div>
       <div className="Dance-header">
             <div>Dance pref</div>
@@ -60,6 +80,11 @@ function Dance(props) {
             <div>Rostered Dances</div>
       </div>
       <div className="Dance-container">
+        {makingChanges ? 
+        <div className="Dance-blockingChanges">
+          Making changes... please be patient!
+        </div> : 
+        null}
           {rosteredList ? rosteredList.map((dancer) => 
               <NameBlock
                   key={dancer._id+"_key"}

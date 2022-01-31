@@ -62,14 +62,12 @@ function Scheduling(props) {
       }
       setFinished(true);
     }
-    if (rosteredList != null && !finished) {
+    if (rosteredList != null && !finished && props.timeslots) {
         getConflicts();
-        get("/api/timeslots").then((res) => {
-            setTimeslots(res);
-        })
+        setTimeslots(props.timeslots)
     }
     
-  }, [rosteredList, conflicts, timeslots])
+  }, [rosteredList, conflicts, timeslots, props.timeslots])
 
   useEffect(() => {
     socket.once("claimSlot", (data) => {
@@ -92,7 +90,6 @@ function Scheduling(props) {
     socket.once("unclaimSlot", (data) => {
         console.log(data.name + " unclaimed " + data.slot.day + ", " + data.slot.time + ", " + data.slot.location);
         const updatedClaimers = data.slot.claimers;
-        console.log(updatedClaimers);
         const updatedTimeslots = timeslots.slice();
         for (let i = 0; i < timeslots.length; i++) {
             if (updatedTimeslots[i]["day"] == data.slot.day && updatedTimeslots[i]["time"] == data.slot.time && updatedTimeslots[i]["location"] == data.slot.location) {

@@ -61,7 +61,7 @@ router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
         { $push: {rosteredDances: req.body.danceName}},
         { new: true}
       );
-      console.log("updated Dancer: " + updatedDancer);
+      // console.log("updated Dancer: " + updatedDancer);
       const dance = await Dance.find({ danceId: req.body.danceId, style: req.body.style })
       if (dance.length === 0) {
         const newDance = new Dance({
@@ -155,7 +155,7 @@ router.post("/removeFromDance", auth.ensureLoggedIn, async (req, res) => {
       { $set: { rosteredDances: tempList }},
       { new: true}
     );
-    console.log("updated dancer: " + updatedDancer);
+    // console.log("updated dancer: " + updatedDancer);
     let dance = await Dance.findOne({ danceId: req.body.danceId });
     let ind2 = -1;
     for (let i = 0; i < dance.members.length; i++) {

@@ -32,6 +32,9 @@ function App(props) {
   const [myDanceIndex, setMyDanceIndex] = useState(null);
   const [myStyle, setMyStyle] = useState(null);
 
+  const [allDances, setAllDances] = useState(null);
+  const [timeslots, setTimeslots] = useState(null);
+
   // const [sortedDancers, setSortedDancers] = useState([]);
   const [sortedDancers, setSortedDancers] = useState(null);
   const [modalOpen, toggleModalState] = useState(false);
@@ -41,8 +44,18 @@ function App(props) {
   const [dancerList, setDancerList] = useState(null); // dancers that are NOT rostered into my dance
   const [rosteredList, setRosteredList] = useState(null); // dancers that are rostered into my dance
 
+  const [makingChanges, setMakingChanges] = useState(false);
+
   useEffect(()=> {
     async function getData() {
+      if (!allDances) {
+          get("/api/getAllDances").then((data) => {
+            setAllDances(data);
+          });
+        }
+        get("/api/timeslots").then((res) => {
+          setTimeslots(res);
+        })
         get("/api/allDancers").then((allDancerData) => {
           const tempDancers = allDancerData.slice();
           tempDancers.sort(function(a, b) {
@@ -264,6 +277,7 @@ function App(props) {
   }
 
   function addToDance(addingDancer) {
+    setMakingChanges(true);
     post("/api/addToDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer, style: myStyle}).then((dancer) => {
       setRosteredList([ ...rosteredList, dancer]);
       const ind = dancerList.indexOf(addingDancer);
@@ -280,10 +294,12 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
+      setMakingChanges(false);
     });
   }
 
   function removeFromDance(removingDancer) {
+    setMakingChanges(true);
     post("/api/removeFromDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((dancer) => {
       const tempDancerList = [ ...dancerList, dancer];
       tempDancerList.sort(function(a, b) {
@@ -304,6 +320,7 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
+      setMakingChanges(false);
     });
   }
 
@@ -338,10 +355,12 @@ function App(props) {
               displayedPrefs={displayedPrefs}
               toggleModal={toggleModal}
               addToDance={addToDance}
-              removeFromDance={removeFromDance}/>
+              removeFromDance={removeFromDance}
+              makingChanges={makingChanges}
+              />
             : null} 
-            <AllDances path="/allDances" />
-            <Scheduling path="/scheduling" rosteredList={rosteredList} choreogName={name}/>
+            <AllDances path="/allDances" allDances={allDances}/>
+            <Scheduling path="/scheduling" rosteredList={rosteredList} choreogName={name} timeslots={timeslots}/>
             <Admin path="/admin" />
             <NotFound default />
             </Router>

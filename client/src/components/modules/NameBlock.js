@@ -12,9 +12,9 @@ function NameBlock(props) {
   const [numHipHop, setNumHipHop] = useState(0);
 
   useEffect(() => {
-    get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
-        setNumHipHop(hiphopCount.hiphopCount);
-    })
+    // get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
+    //     setNumHipHop(hiphopCount.hiphopCount);
+    // })
   }, [dancer])
 
   return (
@@ -77,11 +77,11 @@ function NameBlock(props) {
             ):
             null}
             {dancer.rosteredDances[dancer.rosteredDances.length-1]}
-            {numHipHop > 3 ?
+            {/* {numHipHop > 3 ?
                 <span title="More than 3 hiphop dances!" className="nameBlock-warning">
                  !
                 </span>
-                : null}
+                : null} */}
             </>
         </div>
     </div>

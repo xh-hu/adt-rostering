@@ -10,12 +10,10 @@ function AllDances(props) {
     
     
     useEffect(() => {
-        if (!allDances) {
-            get("/api/getAllDances").then((data) => {
-                setAllDances(data);
-            });
+        if (props.allDances) {
+            setAllDances(props.allDances);
         }
-    });
+    }, [props.allDances]);
 
     return (
     <>

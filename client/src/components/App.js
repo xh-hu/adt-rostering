@@ -124,6 +124,23 @@ function App(props) {
   }, [googleId, myDanceIndex, myDanceName, myStyle]);
 
   function updateDanceSpecificData(updatedDancer, updatedDance, isAdding) {
+    //update all dances page from other choreog changes
+    let tempDances = {}
+    Object.assign(tempDances, allDances);
+    console.log(tempDances);
+    console.log(tempDances[updatedDance]);
+    if (isAdding) {
+      console.log("adding", updatedDance, updatedDancer);
+      tempDances[updatedDance].push(updatedDancer);
+      console.log("yo");
+      console.log(tempDances);
+    } else {
+      let members = tempDances[updatedDance].slice();
+      members = members.filter(dancer => dancer._id !== updatedDancer._id)
+      tempDances[updatedDance] = members;
+    }
+    setAllDances(tempDances);
+    //update my dance page for other dances
     if (updatedDance !== myDanceName) {
       if (rosteredList) {
         for (let i = 0; i < rosteredList.length; i++) {
@@ -142,6 +159,7 @@ function App(props) {
         }
       }
     }
+    //update my dance page for my own dance
     else {
       if (isAdding) {
         if (dancerList) {
@@ -154,7 +172,7 @@ function App(props) {
           setRosteredList([...rosteredList.slice(), updatedDancer]);
         }
       }
-      else {
+      else { // removing
         if (rosteredList && myDanceIndex) {
           for (let i = 0; i < rosteredList.length; i++) {
             if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
@@ -294,7 +312,7 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
-      //update all dances page
+      //update All Dances page for my own dance
       let tempDances = {}
       Object.assign(tempDances, allDances);
       tempDances[myDanceName].push(addingDancer);
@@ -325,13 +343,13 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
-      //update all dances page
+      //update All Dances page for my own dance
       let tempDances = {}
       Object.assign(tempDances, allDances);
       let members = tempDances[myDanceName].slice();
       members = members.filter(dancer => dancer._id !== removingDancer._id)
       tempDances[myDanceName] = members;
-      setAllDances(tempDances); 
+      setAllDances(tempDances);
       setMakingChanges(false);
     });
   }

@@ -294,6 +294,11 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
+      //update all dances page
+      let tempDances = {}
+      Object.assign(tempDances, allDances);
+      tempDances[myDanceName].push(addingDancer);
+      setAllDances(tempDances);
       setMakingChanges(false);
     });
   }
@@ -320,6 +325,13 @@ function App(props) {
       if (ind2 !== -1) {
         setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
       }
+      //update all dances page
+      let tempDances = {}
+      Object.assign(tempDances, allDances);
+      let members = tempDances[myDanceName].slice();
+      members = members.filter(dancer => dancer._id !== removingDancer._id)
+      tempDances[myDanceName] = members;
+      setAllDances(tempDances); 
       setMakingChanges(false);
     });
   }

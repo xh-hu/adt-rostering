@@ -3,11 +3,11 @@ import { get, post } from "../../utilities.js";
 import DanceBlock from "../modules/DanceBlock.js";
 
 import "./AllDances.css";
+import { socket } from "../../client-socket.js";
 
 
 function AllDances(props) {
     const [allDances, setAllDances] = useState(null);
-    
     
     useEffect(() => {
         if (props.allDances) {

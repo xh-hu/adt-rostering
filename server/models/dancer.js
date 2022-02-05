@@ -7,7 +7,7 @@ const DancerSchema = new mongoose.Schema({
   lastName: String,
   phoneNum: String,
   year: String,
-  auditionNum: String,
+  auditionNum: {type: String, default: ""},
   numDances: Number,
   dance_0: Number,
   dance_1: Number,

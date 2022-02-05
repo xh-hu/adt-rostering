@@ -10,11 +10,18 @@ function NameBlock(props) {
   const {dancer, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
 
   const [numHipHop, setNumHipHop] = useState(0);
+  const [auditionNumDisplay, setAuditionNumDisplay] = useState("");
 
   useEffect(() => {
     // get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
     //     setNumHipHop(hiphopCount.hiphopCount);
     // })
+    if (dancer.auditionNum.length > 10) { //truncate choreog/exec keyboard smashes 
+        setAuditionNumDisplay(dancer.auditionNum.slice(0, 10) + "..");
+    }
+    else {
+        setAuditionNumDisplay(dancer.auditionNum);
+    }
   }, [dancer])
 
   return (
@@ -49,7 +56,7 @@ function NameBlock(props) {
             </>
         </div>
         <div className="nameBlock-name">
-            {dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName + " #" + dancer.auditionNum}
+            {dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName + " #" + auditionNumDisplay}
             {dancer.trad_vid !== '' && dancer.trad_vid != null ? 
             <>
                 <a href={dancer.trad_vid} alt="trad" title="trad video" target="_blank"><img src={umbrella} /></a>

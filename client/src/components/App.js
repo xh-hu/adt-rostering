@@ -127,13 +127,8 @@ function App(props) {
     //update all dances page from other choreog changes
     let tempDances = {}
     Object.assign(tempDances, allDances);
-    console.log(tempDances);
-    console.log(tempDances[updatedDance]);
     if (isAdding) {
-      console.log("adding", updatedDance, updatedDancer);
       tempDances[updatedDance].push(updatedDancer);
-      console.log("yo");
-      console.log(tempDances);
     } else {
       let members = tempDances[updatedDance].slice();
       members = members.filter(dancer => dancer._id !== updatedDancer._id)

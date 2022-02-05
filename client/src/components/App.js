@@ -292,6 +292,10 @@ function App(props) {
   function addToDance(addingDancer) {
     setMakingChanges(true);
     post("/api/addToDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: addingDancer, style: myStyle}).then((dancer) => {
+      if (dancer.errMsg) {
+        setMakingChanges(false);
+        return;
+      }
       setRosteredList([ ...rosteredList, dancer]);
       const ind = dancerList.indexOf(addingDancer);
       if (ind !== -1) {
@@ -319,6 +323,10 @@ function App(props) {
   function removeFromDance(removingDancer) {
     setMakingChanges(true);
     post("/api/removeFromDance", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: removingDancer}).then((dancer) => {
+      if (dancer.errMsg) {
+        setMakingChanges(false);
+        return;
+      }
       const tempDancerList = [ ...dancerList, dancer];
       tempDancerList.sort(function(a, b) {
         return a[myDanceIndex] - b[myDanceIndex];

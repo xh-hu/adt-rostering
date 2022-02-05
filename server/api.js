@@ -83,7 +83,7 @@ router.post("/addToDance", auth.ensureLoggedIn, async (req, res) => {
       res.send(updatedDancer);
     }
     else {
-      res.send("Already in dance.");
+      res.send({errMsg: "Already in dance."});
     }
   }
   else {
@@ -175,11 +175,11 @@ router.post("/removeFromDance", auth.ensureLoggedIn, async (req, res) => {
       res.send(updatedDancer);
     }
     else {
-      res.send("Already removed");
+      res.send({errMsg: "Already removed."});
     }
   }
   else {
-    res.send("Already removed");
+    res.send({errMsg: "Already removed."});
   }
 })
 

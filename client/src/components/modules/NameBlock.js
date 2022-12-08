@@ -47,7 +47,7 @@ function NameBlock(props) {
         }
         <div className="nameBlock-numDancesRequested">
             <>
-            {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + dancer.numDances : null}
+            {dancer.rosteredDances ? dancer.rosteredDances.length + "/" + (dancer.numDances ?? '?'): null}
             {dancer.rosteredDances.length > dancer.numDances ?
                 <span title="Over requested quota" className="nameBlock-warning">
                  !

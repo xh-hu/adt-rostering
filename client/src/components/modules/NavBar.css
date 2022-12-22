@@ -49,3 +49,43 @@
 .NavBar-link:hover {
   text-shadow: 1px 1px 2px rgb(255, 255, 255);
 }
+
+.NavBar-rightBlock {
+  display: flex;
+}
+
+.NavBar-rightLinkBlock {
+  position: absolute;
+  right: 200px;
+  top: 32px;
+  font-size: 12px;
+  opacity: 100%;
+  z-index: 10;
+  background-color: black;
+  color: white;
+  font-weight: 400;
+}
+
+.NavBar-rightLinkBlock button {
+  border: 1px solid grey;
+  background-color: rgba(247, 247, 247, 0.084);
+  font-family: "Roboto Mono", monospace;
+  font-weight: 100;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: -5px;
+  width: fit-content;
+  height: fit-content;
+  color: rgb(242, 242, 242);
+  box-shadow: 0.5px 0.5px 2px 0.5px inset grey;
+  font-size: 10px;
+  margin-left: 10px;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+.NavBar-rightLinkBlock button:hover {
+  cursor: pointer;
+  background-color: grey;
+  color: white;
+}
+

@@ -31,6 +31,8 @@ function App(props) {
   const [myDanceName, setMyDanceName] = useState(null);
   const [myDanceIndex, setMyDanceIndex] = useState(null);
   const [myStyle, setMyStyle] = useState(null);
+  const [allDanceNames, setAllDanceNames] = useState(null);
+  const [allDanceIndices, setAllDanceIndices] = useState(null);
 
   const [allDances, setAllDances] = useState(null);
   const [timeslots, setTimeslots] = useState(null);
@@ -46,6 +48,8 @@ function App(props) {
 
   const [makingChanges, setMakingChanges] = useState(false);
 
+  const [finalConflicts, setFinalConflicts] = useState(null);
+
   useEffect(()=> {
     async function getData() {
       if (!allDances) {
@@ -56,55 +60,9 @@ function App(props) {
         get("/api/timeslots").then((res) => {
           setTimeslots(res);
         })
-        get("/api/allDancers").then((allDancerData) => {
-          const tempDancers = allDancerData.slice();
-          tempDancers.sort(function(a, b) {
-            let a_load;
-            let b_load;
-            try {
-              a_load = a.rosteredDances.length;
-            }
-            catch {
-              a_load = 0;
-            }
-            try {
-              b_load = b.rosteredDances.length;
-            }
-            catch {
-              b_load = 0;
-            }
-            return a_load - b_load;  
-            })
-            setSortedDancers(tempDancers);
-            if (myDanceIndex) {
-              get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
-                myDancerData.sort(function(a, b) {
-                  return a[myDanceIndex] - b[myDanceIndex];
-                })
-                setRosteredList(myDancerData);
-                const tempList = [];
-                for (var i = 0; i < allDancerData.length; i++) {
-                  let isMyDancer = false;
-                  for (var j = 0; j < myDancerData.length; j++) {
-                    if (allDancerData[i]._id == myDancerData[j]._id) {
-                      isMyDancer = true;
-                      break;
-                    }
-                  }
-                  if (!isMyDancer) {
-                    tempList.push(allDancerData[i]);
-                  }
-                }
-                tempList.sort(function(a, b) {
-                  return a[myDanceIndex] - b[myDanceIndex];
-                })
-                setDancerList(tempList);
-            });
-            }
-        });
     }
-
-    if (!sortedDancers && googleId) {
+    
+    if (googleId) {
         getData();
     }
     else {
@@ -113,15 +71,140 @@ function App(props) {
           get("/api/validChoreog", { googleid: user.googleid, gmail: user.email }).then((choreog) => {
             setGoogleId(user.email);
             setName(user.name);
-            setMyDanceName(choreog.dance_name);
-            setMyDanceIndex(choreog.dance_index);
+            if (!myDanceName) setMyDanceName(choreog.dance_name);
+            if (!myDanceIndex) setMyDanceIndex(choreog.dance_index);
             setMyStyle(choreog.style);
+            if (choreog.additional_dance_names) {
+              let otherNames = choreog.additional_dance_names.split("; ")
+              setAllDanceNames([choreog.dance_name, ...otherNames]);
+            }
+            if (choreog.additional_dance_indices) {
+              let otherIndices = choreog.additional_dance_indices.split("; ")
+              setAllDanceIndices([choreog.dance_index, ...otherIndices]);
+            }
           })
         }
       });
     }
 
-  }, [googleId, myDanceIndex, myDanceName, myStyle]);
+  }, [googleId]);
+
+  useEffect(() => {
+    async function getDanceSpecificData() {
+      get("/api/allDancers").then((allDancerData) => {
+        const tempDancers = allDancerData.slice();
+        tempDancers.sort(function(a, b) {
+          let a_load;
+          let b_load;
+          try {
+            a_load = a.rosteredDances.length;
+          }
+          catch {
+            a_load = 0;
+          }
+          try {
+            b_load = b.rosteredDances.length;
+          }
+          catch {
+            b_load = 0;
+          }
+          return a_load - b_load;  
+          })
+          setSortedDancers(tempDancers);
+          if (myDanceIndex) {
+            get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
+              myDancerData.sort(function(a, b) {
+                return a[myDanceIndex] - b[myDanceIndex];
+              })
+              setRosteredList(myDancerData);
+              const tempList = [];
+              for (var i = 0; i < allDancerData.length; i++) {
+                let isMyDancer = false;
+                for (var j = 0; j < myDancerData.length; j++) {
+                  if (allDancerData[i]._id == myDancerData[j]._id) {
+                    isMyDancer = true;
+                    break;
+                  }
+                }
+                if (!isMyDancer) {
+                  tempList.push(allDancerData[i]);
+                }
+              }
+              tempList.sort(function(a, b) {
+                return a[myDanceIndex] - b[myDanceIndex];
+              })
+              setDancerList(tempList);
+              setMakingChanges(false);
+          });
+          }
+      });
+    }
+    setMakingChanges(true)
+    getDanceSpecificData();
+  }, [myDanceName, myDanceIndex])
+
+  // const [conflicts, setConflicts] = useState();
+  
+  useEffect(() => {
+    async function getConflicts() {
+      setMakingChanges(true);
+      setFinalConflicts(null);
+      let conflicts = {"sunday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []},
+  "monday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
+  "tuesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
+  "wednesday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
+  "thursday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
+  "friday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []},
+  "saturday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}}
+      for (let i = 0; i < rosteredList.length; i++) {
+          const dancer = rosteredList[i];
+          const dancerName = dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName;
+          const sundayConflicts = dancer.sunday != null && dancer.sunday.length !== 0 ? dancer.sunday.split(" ") : [];
+          for (let j = 0; j < sundayConflicts.length; j++) {
+              const c = sundayConflicts[j];
+              conflicts["sunday"][c] = conflicts["sunday"][c].concat([dancerName])
+          }
+          const mondayConflicts = dancer.monday != null && dancer.monday.length !== 0 ? dancer.monday.split(" "): [];
+          for (let j = 0; j < mondayConflicts.length; j++) {
+              const c = mondayConflicts[j];
+              conflicts["monday"][c] = conflicts["monday"][c].concat([dancerName])
+          }
+          const tuesdayConflicts = dancer.tuesday != null && dancer.tuesday.length !== 0 ? dancer.tuesday.split(" "): [];
+          for (let j = 0; j < tuesdayConflicts.length; j++) {
+              const c = tuesdayConflicts[j];
+              conflicts["tuesday"][c] = conflicts["tuesday"][c].concat([dancerName])
+          }
+          const wednesdayConflicts = dancer.wednesday != null && dancer.wednesday.length !== 0 ? dancer.wednesday.split(" ") : [];
+          for (let j = 0; j < wednesdayConflicts.length; j++) {
+              const c = wednesdayConflicts[j];
+              conflicts["wednesday"][c] = conflicts["wednesday"][c].concat([dancerName])
+          }
+          const thursdayConflicts = dancer.thursday != null && dancer.thursday.length !== 0 ? dancer.thursday.split(" ") : [];
+          for (let j = 0; j < thursdayConflicts.length; j++) {
+              const c = thursdayConflicts[j];
+              conflicts["thursday"][c] = conflicts["thursday"][c].concat([dancerName])
+          }
+          const fridayConflicts = dancer.friday != null && dancer.friday.length !== 0 ? dancer.friday.split(" ") : [];
+          for (let j = 0; j < fridayConflicts.length; j++) {
+              const c = fridayConflicts[j];
+              conflicts["friday"][c] = conflicts["friday"][c].concat([dancerName])
+          }
+          const saturdayConflicts = dancer.saturday != null && dancer.saturday.length !== 0 ? dancer.saturday.split(" ") : [];
+          for (let j = 0; j < saturdayConflicts.length; j++) {
+              const c = saturdayConflicts[j];
+              conflicts["saturday"][c] = conflicts["saturday"][c].concat([dancerName])
+          }
+      }
+      setFinalConflicts(conflicts);
+      setMakingChanges(false);
+    }
+    if (rosteredList) {
+        getConflicts();
+    }
+
+  }, [rosteredList])
+
+  
 
   function updateDanceSpecificData(updatedDancer, updatedDance, isAdding) {
     //update all dances page from other choreog changes
@@ -243,6 +326,14 @@ function App(props) {
         setMyDanceName(choreog.dance_name);
         setMyDanceIndex(choreog.dance_index);
         setMyStyle(choreog.style);
+        if (choreog.additional_dance_names) {
+          let otherNames = choreog.additional_dance_names.split("; ")
+          setAllDanceNames([choreog.dance_name, ...otherNames]);
+        }
+        if (choreog.additional_dance_indices) {
+          let otherIndices = choreog.additional_dance_indices.split("; ")
+          setAllDanceIndices([choreog.dance_index, ...otherIndices]);
+        }
       })
     });
   };
@@ -365,6 +456,12 @@ function App(props) {
         googleId={googleId}
         handleLogin={handleLogin}
         handleLogout={handleLogout}
+        danceName={myDanceName}
+        danceIndex={myDanceIndex}
+        setMyDanceName={setMyDanceName}
+        setMyDanceIndex={setMyDanceIndex}
+        allDanceNames={allDanceNames}
+        allDanceIndices={allDanceIndices}
       />
       <div className="appContainer">
         {googleId ? (
@@ -393,7 +490,7 @@ function App(props) {
               />
             : null} 
             <AllDances path="/allDances" allDances={allDances}/>
-            <Scheduling path="/scheduling" rosteredList={rosteredList} choreogName={name} timeslots={timeslots}/>
+            <Scheduling path="/scheduling" choreogName={name} danceName={myDanceName} timeslots={timeslots} conflicts={finalConflicts} makingChanges={makingChanges}/>
             <Admin path="/admin" />
             <NotFound default />
             </Router>

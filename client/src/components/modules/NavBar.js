@@ -9,12 +9,18 @@ const GOOGLE_CLIENT_ID = "7112847294-5v026crn1ac038njg41v8a4e6obaeaae.apps.googl
 
 
 function NavBar(props) {
-  const {googleId, handleLogin, handleLogout} = props;
+  const {googleId, handleLogin, handleLogout, danceName, danceIndex, setMyDanceName, setMyDanceIndex, allDanceNames, allDanceIndices} = props;
   
   const [pathName, setPathName] = useState("/");
 
   const isActive = () => {
     setPathName(window.location.pathname);
+  }
+
+  const switchDance = () => {
+    let index = allDanceNames.indexOf(danceName)
+    setMyDanceName(allDanceNames[(index+1) % allDanceNames.length])
+    setMyDanceIndex(allDanceIndices[(index+1) % allDanceNames.length])
   }
 
   return (
@@ -47,13 +53,23 @@ function NavBar(props) {
                 <div>{pathName === "/scheduling" ? "^" : null}</div>
               </div>
             </div>
-            <GoogleLogout
-                clientId={GOOGLE_CLIENT_ID}
-                buttonText="Logout"
-                onLogoutSuccess={handleLogout}
-                onFailure={(err) => console.log(err)}
-                className="NavBar-link NavBar-login"
-            />
+            <div className="NavBar-rightBlock">
+              {allDanceNames && allDanceNames.length > 1 ? 
+              <div className="NavBar-rightLinkBlock">
+                  Viewing: {danceName} 
+                  <button onClick={switchDance}>switch</button>
+              </div>
+              : null}
+              <div>
+              <GoogleLogout
+                  clientId={GOOGLE_CLIENT_ID}
+                  buttonText="Logout"
+                  onLogoutSuccess={handleLogout}
+                  onFailure={(err) => console.log(err)}
+                  className="NavBar-link NavBar-login"
+              />
+              </div>
+            </div>
         </>
         :
             <GoogleLogin

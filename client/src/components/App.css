@@ -14,7 +14,7 @@
 .App-logo-container {
   display: flex;
   justify-content: center;
-  margin-top: -30px;
+  margin-top: -80px;
   transform: scale(0.55, 0.55);
   animation: flashingLogo 1s infinite;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import NameBlock from "../modules/NameBlock.js";
 import PrefModal from "../modules/PrefModal.js";
 

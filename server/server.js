@@ -15,7 +15,7 @@ const auth = require("./auth");
 
 const socketManager = require("./server-socket");
 
-const mongoConnectionURL = process.env.ATLAS_SRV;
+const mongoConnectionURL = "mongodb+srv://adt-exec:uUdvNkWwvEQNQH8i@rosteringcluster.qmkst.mongodb.net/?retryWrites=true&w=majority"; // process.env.ATLAS_SRV;
 const databaseName = "test";
 
 mongoose
@@ -38,7 +38,7 @@ app.use(express.json());
 // set up a session, which will persist login data across requests
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: "imissadtinperson", // process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })

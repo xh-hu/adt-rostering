@@ -7,7 +7,7 @@ import { socket } from "../../client-socket.js";
 
 
 function Scheduling(props) {
-  const { choreogName, danceName, timeslots, conflicts, makingChanges} = props;
+  const { choreogName, danceName, timeslots, conflicts, displayedConflicts, makingChanges, conflictOpen, toggleConflict} = props;
 
   const [allTimeslots, setAllTimeslots] = useState(null);
 
@@ -94,6 +94,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -109,6 +112,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -124,6 +130,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -139,6 +148,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -154,6 +166,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -169,6 +184,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}
@@ -184,6 +202,9 @@ function Scheduling(props) {
                 claimers={slot["claimers"]}
                 claimFunction={claimSlot}
                 choreogName={choreogName + " (" + danceName + ")"}
+                displayedConflicts={displayedConflicts}
+                conflictOpen={conflictOpen}
+                toggleConflict={toggleConflict}
             /> : 
             null
             )}

@@ -7,10 +7,11 @@ import umbrella from "../../public/umbrella_icon_white.png";
 import "./NameBlock.css";
 
 function NameBlock(props) {
-  const {dancer, toggleModal, onDancePage, danceRanking, addFunction, removeFunction} = props;
+  const {dancer, toggleModal, onDancePage, danceRanking, danceName, notTaking, mightTake, addFunction, removeFunction} = props;
 
   const [numHipHop, setNumHipHop] = useState(0);
   const [auditionNumDisplay, setAuditionNumDisplay] = useState("");
+  const [rejected, setRejected] = useState(dancer.rejectedDances && dancer.rejectedDances.includes(danceName));
 
   useEffect(() => {
     // get("/api/hiphopCount", { dancerId: dancer._id }).then((hiphopCount) => {
@@ -91,6 +92,18 @@ function NameBlock(props) {
                 : null} */}
             </>
         </div>
+        { onDancePage ? 
+            <>
+            { !rejected ? 
+                <div className="nameBlock-notTaking">
+                    <button onClick={() => {notTaking(dancer); setRejected(true)}}> </button>
+                </div>: 
+                <div className="nameBlock-mightTake">
+                    <button onClick={() => {mightTake(dancer); setRejected(false)}}> </button>
+                </div>
+            }
+            </>:<></>
+        }
     </div>
   );
 }

@@ -1,13 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap");
 
 .nameBlock-container {
-  max-width: 90vw;
+  max-width: 100vw;
   height: fit-content;
   padding-top: 20px;
   padding-bottom: 20px;
   display: grid;
-  grid-template-columns: 16vw 8vw 18vw 10vw 10vw 12vw;
-  margin-left: 5vw;
+  grid-template-columns: 16vw 8vw 18vw 10vw 10vw 16vw 6vw;
+  margin-left: 1vw;
 }
 
 .nameBlock-container button {
@@ -96,6 +96,23 @@
   cursor: pointer;
   background-color: grey;
   color: white;
+}
+
+.nameBlock-notTaking button {
+  text-align: center;
+  border: 1px solid white;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.nameBlock-mightTake button {
+  text-align: center;
+  border: 1px solid white;
+  background-color: white;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 10px;
 }
 
 .nameBlock-numDancesRequested {

@@ -206,6 +206,68 @@ async function updateOtherDancesForRemove(oldDancer, updatedDancer) {
   }
 }
 
+router.post("/notTaking", auth.ensureLoggedIn, async (req, res) => {
+  //Dancer logic
+  const dancer = await Dancer.findOne({_id: req.body.dancer._id});
+  console.log("notTaking")
+  console.log(dancer.firstName)
+  if (dancer.rejectedDances) {
+    if (!dancer.rejectedDances.includes(req.body.danceName)) {
+      const updatedDancer = await Dancer.findOneAndUpdate(
+        { _id: req.body.dancer._id},
+        { $push: {rejectedDances: req.body.danceName}},
+        { new: true}
+      );
+      console.log("updated Dancer: " + updatedDancer);
+      await socketManager.getIo().emit("notTakingDancerForDance", {name: req.body.choreogName, rejDancer: dancer, danceName: req.body.danceName});
+      res.send(updatedDancer);
+    }
+    else {
+      res.send({errMsg: "Already was rejected"});
+    }
+  }
+  else {
+    const updatedDancer = await Dancer.findOneAndUpdate(
+      { _id: req.body.dancer._id},
+      { $set: {rejectedDances: [req.body.danceName]}},
+      { new: true}
+    )
+    await socketManager.getIo().emit("notTakingDancerForDance", {name: req.body.choreogName, rejDancer: dancer, danceName: req.body.danceName});
+    res.send(updatedDancer);
+  }
+})
+
+router.post("/mightTake", auth.ensureLoggedIn, async (req, res) => {
+  const dancer = await Dancer.findOne({_id: req.body.dancer._id});
+  console.log("mightTake")
+  console.log(dancer.firstName)
+  let ind = -1;
+  if (dancer == null) {
+    res.status(404).send({ msg: "Dancer not found" });
+    return;
+  }
+  for (let i = 0; i < dancer.rejectedDances.length; i++) {
+    if (dancer.rejectedDances[i].toString() === req.body.danceName.toString()) {
+      ind = i;
+      break;
+    }
+  }
+  if (ind !== -1) {
+    const tempList = [...dancer.rejectedDances.slice(0, ind), ...dancer.rejectedDances.slice(ind+1)];
+    const updatedDancer = await Dancer.findOneAndUpdate(
+      { _id: req.body.dancer._id},
+      { $set: { rejectedDances: tempList }},
+      { new: true}
+    );
+    console.log("updated dancer: " + updatedDancer);
+    await socketManager.getIo().emit("considerDancerForDance", {name: req.body.choreogName, accDancer: dancer, danceName: req.body.danceName});
+    res.send(updatedDancer);
+  }
+  else {
+    res.send({errMsg: "Already might take."});
+  }
+})
+
 router.get("/getDance", auth.ensureLoggedIn, (req, res) => {
   Dance.findOne({ danceId: req.query.danceId }).then((dance) => {
     if (dance) {

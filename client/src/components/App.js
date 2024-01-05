@@ -41,13 +41,18 @@ function App() {
   const [modalOpen, toggleModalState] = useState(false);
   const [displayedDancer, setDancer] = useState(null);
   const [displayedPrefs, setPrefs] = useState([]);
+  const [conflictOpen, toggleConflictViewState] = useState(false);
+  const [displayedConflicts, setConflicts] = useState(null)
 
   const [dancerList, setDancerList] = useState(null); // dancers that are NOT rostered into my dance
   const [rosteredList, setRosteredList] = useState(null); // dancers that are rostered into my dance
 
+  // const [rejectedDanceMap, setRejectedDanceMap] = useState(new Map());
+
   const [makingChanges, setMakingChanges] = useState(false);
 
   const [finalConflicts, setFinalConflicts] = useState(null);
+  const [conflictReasons, setConflictReasons] = useState(null);
 
   useEffect(()=> {
     async function getData() {
@@ -102,6 +107,8 @@ function App() {
           return a_load - b_load;  
           })
           setSortedDancers(tempDancers);
+          // setRejectedDanceMap(new Map(tempDancers.map((dancer) => [dancer, new Map()])))
+          // console.log(rejectedDanceMap)
           if (myDanceIndex) {
             get("/api/getDance", {danceId: myDanceIndex}).then((myDancerData) => {
               myDancerData.sort(function(a, b) {
@@ -147,6 +154,7 @@ function App() {
   "thursday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}, 
   "friday": {"5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []},
   "saturday": {"10a": [], "11a": [], "12p": [], "1p": [], "2p": [], "3p": [], "4p": [], "5p": [], "6p": [], "7p": [], "8p": [], "9p": [], "10p": []}}
+      let conflictReasonsList = JSON.parse(JSON.stringify(conflicts))
       for (let i = 0; i < rosteredList.length; i++) {
           const dancer = rosteredList[i];
           const dancerName = dancer.firstName + (dancer.nickname != null && dancer.nickname !== "" ? " (" + dancer.nickname + ") " : " ") + dancer.lastName;
@@ -159,10 +167,12 @@ function App() {
             for (let j = 0; j < dayConflicts.length; j++) {
               const c = dayConflicts[j];
               conflicts[day][c] = conflicts[day][c].concat([dancerName])
+              conflictReasonsList[day][c] = conflictReasonsList[day][c].concat([dancerName + ":\n" + dancer.conflict])
             }
           }
       }
       setFinalConflicts(conflicts);
+      setConflictReasons(conflictReasonsList);
       setMakingChanges(false);
     }
     if (rosteredList) {
@@ -283,6 +293,52 @@ function App() {
     }
   })
 
+  useEffect(() => {
+    socket.once("notTakingDancerForDance", (data) => {
+      if (data.name !== name) {
+        let ind = -1;
+        for (let i = 0; i < sortedDancers.length; i++) {
+          if (sortedDancers[i]._id == data.rejDancer._id) {
+            ind = i;
+            break;
+          }
+        } 
+        get("/api/getDancer", { dancerId: data.rejDancer._id }).then((updatedDancer) => {
+          if (ind !== -1) {
+            setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
+            // updateDanceSpecificData(updatedDancer, data.danceName, false);
+          }
+        })
+      }
+    })
+    return () => {
+      socket.off("notTakingDancerForDance");
+    }
+  })
+
+  useEffect(() => {
+    socket.once("considerDancerForDance", (data) => {
+      if (data.name !== name) {
+        let ind = -1;
+        for (let i = 0; i < sortedDancers.length; i++) {
+          if (sortedDancers[i]._id == data.accDancer._id) {
+            ind = i;
+            break;
+          }
+        } 
+        get("/api/getDancer", { dancerId: data.accDancer._id }).then((updatedDancer) => {
+          if (ind !== -1) {
+            setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
+            // updateDanceSpecificData(updatedDancer, data.danceName, false);
+          }
+        })
+      }
+    })
+    return () => {
+      socket.off("considerDancerForDance");
+    }
+  })
+
   function handleLogin(res) {
     const userToken = res.tokenObj.id_token;
     post("/api/login", { token: userToken }).then((user) => {
@@ -344,6 +400,17 @@ function App() {
             return a[1] - b[1];
         })
         setPrefs(tempPrefs);
+    }
+  }
+
+  function toggleConflict(day, time) {
+    if (conflictOpen) {
+      toggleConflictViewState(false);
+      setConflicts(null);
+    }
+    else {
+      toggleConflictViewState(true);
+      setConflicts(conflictReasons[day][time])
     }
   }
 
@@ -415,6 +482,20 @@ function App() {
     });
   }
 
+  function notTaking(rejDancer) {
+    setMakingChanges(true);
+    post("/api/notTaking", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: rejDancer, style: myStyle}).then((dancer) => {
+      setMakingChanges(false);
+    });
+  }
+
+  function mightTake(acceptDancer) {
+    setMakingChanges(true);
+    post("/api/mightTake", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: acceptDancer, style: myStyle}).then((dancer) => {
+      setMakingChanges(false);
+    });
+  }
+
 
     return (
       <>
@@ -440,12 +521,16 @@ function App() {
               allDancers={sortedDancers}
               displayedDancer={displayedDancer}
               displayedPrefs={displayedPrefs}
+              // rejectedDanceMap={rejectedDanceMap}
               toggleModal={toggleModal}
             /> : null}
             { rosteredList && dancerList && myDanceName && myDanceIndex ? 
             <Dance path="/dance"
               rosteredList={rosteredList}
               dancerList={dancerList}
+              // rejectedDanceMap={rejectedDanceMap}
+              notTaking={notTaking}
+              mightTake={mightTake}
               myDanceName={myDanceName}
               myDanceIndex={myDanceIndex}
               displayedDancer={displayedDancer}
@@ -457,7 +542,16 @@ function App() {
               />
             : null} 
             <AllDances path="/allDances" allDances={allDances}/>
-            <Scheduling path="/scheduling" choreogName={name} danceName={myDanceName} timeslots={timeslots} conflicts={finalConflicts} makingChanges={makingChanges}/>
+            <Scheduling path="/scheduling" 
+              choreogName={name} 
+              danceName={myDanceName} 
+              timeslots={timeslots} 
+              conflicts={finalConflicts} 
+              displayedConflicts={displayedConflicts}
+              toggleConflict={toggleConflict}
+              conflictOpen={conflictOpen}
+              makingChanges={makingChanges} 
+              />
             <Admin path="/admin" />
             <NotFound default />
             </Router>

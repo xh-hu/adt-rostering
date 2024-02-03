@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-
+import ConflictModal from "../modules/ConflictModal.js";
 import "./ScheduleBlock.css";
 
 function ScheduleBlock(props) {
-  const {day, time, location, conflicts, claimers, claimFunction, choreogName} = props;
+  const {day, time, location, conflicts, claimers, claimFunction, choreogName, toggleConflict, displayedConflicts} = props;
   const [claimed, setClaimed] = useState(false);
 
   useEffect(() => {
@@ -26,10 +26,19 @@ function ScheduleBlock(props) {
             </div>
             : 
             <div className="ScheduleBlock-claimButtonWithConflict" onClick={() => claimFunction(day, time, location, claimers)}>
-                <span title={conflicts.join(", ")}>{claimed ? "Unclaim" : "Claim (!)"}</span>
+                <span title={conflicts.join("\n")}>{claimed ? "Unclaim" : "Claim (!)"}</span>
             </div>
           }
+          <div className="viewConflictButton" onClick={() => toggleConflict(day, time)}>
+            <span>Conflicts</span>
+          </div>
       </div>
+      {displayedConflicts ? 
+        <ConflictModal
+          conflicts={displayedConflicts}
+          toggleConflict={toggleConflict}
+        />
+        : null}
     </>
   );
 }

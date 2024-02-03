@@ -15,6 +15,9 @@ function PrefModal(props) {
     }
   })
 
+  // console.log(rejectedDanceMap?.get(displayedDancer))
+  // console.log(displayedDancer.rejectedDances)
+
   return (
     <>
       <div className="PrefModal-prefModalBackground">
@@ -30,7 +33,7 @@ function PrefModal(props) {
                 {danceIndexToName ? 
                 displayedPrefs.map((pref) => 
                     <div className="PrefModal-individualPref">
-                        {pref[1]}: {danceIndexToName["dance_" + pref[0]]}
+                        {pref[1]}: {danceIndexToName["dance_" + pref[0]]} {displayedDancer.rejectedDances?.includes(danceIndexToName["dance_" + pref[0]]) ? "(X)" : ""}
                     </div>
                 ) : null
               }

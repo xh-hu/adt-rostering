@@ -28,6 +28,7 @@ function FullRoster(props) {
                   key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
+                  // rejectedDanceMap={rejectedDanceMap}
               />
           ) : null
           : null
@@ -37,6 +38,7 @@ function FullRoster(props) {
       <PrefModal
         displayedDancer={displayedDancer}
         displayedPrefs={displayedPrefs}
+        // rejectedDanceMap={rejectedDanceMap}
         toggleModal={toggleModal}
         comments={displayedDancer.comments}
       />

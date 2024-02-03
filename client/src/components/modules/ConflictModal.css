@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap");
+
+.ConflictModal-conflictModalBackground {
+  position: fixed;
+  width: 100vw;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(23, 23, 23, 0.0);
+  z-index: 5;
+}
+
+.ConflictModal-conflictModal {
+  font-weight: 400;
+  position: fixed;
+  width: 60vw;
+  height: fit-content;
+  max-height: 75vh;
+  /* overflow-y: scroll; */
+  background-color: white;
+  z-index: 10;
+  opacity: 100%;
+  top: 15vh;
+  left: 20vw;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid gray;
+  color: black;
+  box-shadow: 1px 1px 3px 1px grey;
+}
+
+/* .ConflictModal-individualConflict {
+  height: 75vh;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: visible;
+} */
+
+.ConflictModal-conflicts {
+  font-size: 15px;
+  height: 50vh;
+  white-space: pre-line;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+}
+
+.ConflictModal-conflictModal button {
+  border: 1px solid grey;
+  background-color: white;
+  border-radius: 10px;
+  padding: 5px;
+  font-family: "Roboto Mono", monospace;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  box-shadow: 0.5px 0.5px 2px 0.5px grey;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+.ConflictModal-conflictModal button:hover {
+  cursor: pointer;
+  background-color: gray;
+  color: white;
+}

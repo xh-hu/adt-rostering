@@ -29,6 +29,18 @@
     border-radius: 10px;
 }
 
+.viewConflictButton {
+    width: fit-content;
+    color: white;
+    margin-left: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border: 1px solid white;
+    border-radius: 10px;
+}
+
 .ScheduleBlock-claimButtonNoConflict:hover {
     cursor: pointer;
 }

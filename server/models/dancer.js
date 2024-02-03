@@ -35,9 +35,11 @@ const DancerSchema = new mongoose.Schema({
   friday: String,
   saturday: String,
   sunday: String,
+  conflict: String,
   trad_video: String,
   hiphop_video: String,
   rosteredDances: Array,
+  rejectedDances: Array,
 });
 
 // compile model from schema

@@ -6,10 +6,11 @@ import "./Dance.css";
 
 
 function Dance(props) {
-  const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, addToDance, removeFromDance, makingChanges} = props;
+  const { rosteredList, dancerList, myDanceName, myDanceIndex, displayedDancer, displayedPrefs, toggleModal, notTaking, mightTake, addToDance, removeFromDance, makingChanges} = props;
 
   const [ roster, setRoster ] = useState(null);
   const [ copied, setCopied ] = useState(false);
+  const [ copiedList, setCopiedList ] = useState(false);
   const [ copiedEmails, setCopiedEmails ] = useState(false);
 
   useEffect(() => {
@@ -42,6 +43,29 @@ function Dance(props) {
     }
   }
 
+  function copyNumberListToClipboard() {
+    const alphaRoster = roster.slice();
+    if (alphaRoster.length > 0) {
+      alphaRoster.sort(function(a, b) {
+        if (a.firstName < b.firstName){
+          return -1;
+        }
+        if (a.firstName > b.firstName) {
+          return 1;
+        }
+        return 0;
+      });
+      let rosteredListString = "";
+      for (let i = 0; i < alphaRoster.length; i++) {
+        const nameString = alphaRoster[i].firstName + " " + alphaRoster[i].lastName;
+        rosteredListString = rosteredListString + (i+1).toString() + ". " + nameString + "\n";
+      }
+      navigator.clipboard.writeText(rosteredListString);
+      console.log("Copied!");
+      setCopiedList(true);
+    }
+  }
+
   function copyEmailsToClipboard() {
     const alphaRoster = roster.slice();
     if (alphaRoster.length > 0) {
@@ -67,6 +91,9 @@ function Dance(props) {
         <div className="Dance-copyButton" onClick={() => copyToClipboard()}>
           {copied ? "Copied!" : "Copy roster to clipboard"}
         </div>
+        <div className="Dance-copyButton" onClick={() => copyNumberListToClipboard()}>
+          {copiedList ? "Copied!" : "Copy roster as numbered list"}
+        </div>
         <div className="Dance-copyButton" onClick={() => copyEmailsToClipboard()}>
           {copiedEmails ? "Copied!" : "Copy emails to clipboard"}
         </div>
@@ -78,6 +105,7 @@ function Dance(props) {
             <div>Year</div>
             <div>Prefs</div>
             <div>Rostered Dances</div>
+            <div>NOT taking</div>
       </div>
       <div className="Dance-container">
         {makingChanges ? 
@@ -90,8 +118,12 @@ function Dance(props) {
                   key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
+                  // rejectedDanceMap={rejectedDanceMap}
+                  notTaking={notTaking}
+                  mightTake={mightTake}
                   onDancePage={true}
                   danceRanking={dancer[myDanceIndex]}
+                  danceName={myDanceName}
                   addFunction={null}
                   removeFunction={removeFromDance} 
                   
@@ -103,8 +135,12 @@ function Dance(props) {
                   key={dancer._id+"_key"}
                   dancer={dancer}
                   toggleModal={toggleModal}
+                  // rejectedDanceMap={rejectedDanceMap}
+                  notTaking={notTaking}
+                  mightTake={mightTake}
                   onDancePage={true}
                   danceRanking={dancer[myDanceIndex]} 
+                  danceName={myDanceName}
                   addFunction={addToDance}
                   removeFunction={null}
               />
@@ -114,6 +150,7 @@ function Dance(props) {
         <PrefModal
           displayedDancer={displayedDancer}
           displayedPrefs={displayedPrefs}
+          // rejectedDanceMap={rejectedDanceMap}
           toggleModal={toggleModal}
           comments={displayedDancer.comments}
         />

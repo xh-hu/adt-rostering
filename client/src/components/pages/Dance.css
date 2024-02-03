@@ -26,7 +26,7 @@
 }
 
 .Dance-container {
-  width: 90vw;
+  width: 100vw;
   margin-left: 5vw;
 }
 
@@ -36,11 +36,11 @@
 }
 
 .Dance-header {
-  width: 90vw;
+  width: 100vw;
   height: 60px;
   display: grid;
-  grid-template-columns: 16vw 8vw 18vw 10vw 10vw 12vw;
-  margin-left: 10vw;
+  grid-template-columns: 16vw 8vw 18vw 10vw 10vw 16vw 6vw;
+  margin-left: 6vw;
   font-weight: 400;
   margin-top: 60px;
 }

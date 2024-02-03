@@ -17,7 +17,7 @@ function ConflictModal(props) {
         <hr></hr>
         <div className="ConflictModal-contentArea">
             <div className="ConflictModal-conflicts">
-                {conflicts.join("\n")}
+                {conflicts.join("\n\n")}
             </div>
         </div>
         <button onClick={toggleConflict}>Close</button>

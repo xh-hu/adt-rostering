@@ -79,7 +79,7 @@ function Scheduling(props) {
       Green claim button means no conflicts, and orange button means at least one dancer in your rostered list has a conflict.
       <br></br>
       <br></br>
-      Mouse over the orange claim button to see the dancers which have conflicts.
+      Mouse over the orange claim button to see the dancers which have conflicts. Click on the conflict button to see what specific conflicts your dancers have.
       </div>
         {allTimeslots && conflicts ? 
         <div className="Scheduling-calendar-section">

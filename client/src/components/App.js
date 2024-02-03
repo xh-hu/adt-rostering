@@ -138,8 +138,10 @@ function App() {
       });
     }
     setMakingChanges(true)
-    getDanceSpecificData();
-  }, [myDanceName, myDanceIndex])
+    if (googleId) {
+      getDanceSpecificData();
+    }
+  }, [myDanceName, myDanceIndex, googleId])
 
   // const [conflicts, setConflicts] = useState();
   
@@ -244,6 +246,26 @@ function App() {
       }
     }
   }
+
+  function updateDanceTempDecision(updatedDancer) {
+    //update my dance page for other dances
+    if (rosteredList) {
+      for (let i = 0; i < rosteredList.length; i++) {
+        if (rosteredList[i]._id.toString() == updatedDancer._id.toString()) {
+          setRosteredList([...rosteredList.slice(0, i), updatedDancer, ...rosteredList.slice(i+1)]);
+          break;
+        }
+      }
+    }
+    if (dancerList) {
+      for (let i = 0; i < dancerList.length; i++) {
+        if (dancerList[i]._id.toString() == updatedDancer._id.toString()) {
+          setDancerList([...dancerList.slice(0, i), updatedDancer, ...dancerList.slice(i+1)]);
+          break;
+        }
+      }
+    }
+  }
   
 
   useEffect(() => {
@@ -306,7 +328,7 @@ function App() {
         get("/api/getDancer", { dancerId: data.rejDancer._id }).then((updatedDancer) => {
           if (ind !== -1) {
             setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
-            // updateDanceSpecificData(updatedDancer, data.danceName, false);
+            updateDanceTempDecision(updatedDancer);
           }
         })
       }
@@ -329,7 +351,7 @@ function App() {
         get("/api/getDancer", { dancerId: data.accDancer._id }).then((updatedDancer) => {
           if (ind !== -1) {
             setSortedDancers([...sortedDancers.slice(0, ind), updatedDancer, ...sortedDancers.slice(ind+1)]);
-            // updateDanceSpecificData(updatedDancer, data.danceName, false);
+            updateDanceTempDecision(updatedDancer);
           }
         })
       }
@@ -485,6 +507,24 @@ function App() {
   function notTaking(rejDancer) {
     setMakingChanges(true);
     post("/api/notTaking", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: rejDancer, style: myStyle}).then((dancer) => {
+      const ind = rosteredList.indexOf(rejDancer);
+      if (ind !== -1) {
+        setDancerList([...rosteredList.slice(0, ind), dancer, ...rosteredList.slice(ind+1)])   
+      }
+      const ind1 = dancerList.indexOf(rejDancer);
+      if (ind1 !== -1) {
+        setDancerList([...dancerList.slice(0, ind1), dancer, ...dancerList.slice(ind1+1)])   
+      }
+      let ind2 = -1;
+      for (let d of sortedDancers) {
+        if (d._id == rejDancer._id) {
+          ind2 = sortedDancers.indexOf(d);
+          break;
+        }
+      }
+      if (ind2 !== -1) {
+        setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
+      }
       setMakingChanges(false);
     });
   }
@@ -492,6 +532,24 @@ function App() {
   function mightTake(acceptDancer) {
     setMakingChanges(true);
     post("/api/mightTake", {choreogName: name, danceId: myDanceIndex, danceName: myDanceName, dancer: acceptDancer, style: myStyle}).then((dancer) => {
+      const ind = rosteredList.indexOf(acceptDancer);
+      if (ind !== -1) {
+        setDancerList([...rosteredList.slice(0, ind), dancer, ...rosteredList.slice(ind+1)])   
+      }
+      const ind1 = dancerList.indexOf(acceptDancer);
+      if (ind1 !== -1) {
+        setDancerList([...dancerList.slice(0, ind1), dancer, ...dancerList.slice(ind1+1)])   
+      }
+      let ind2 = -1;
+      for (let d of sortedDancers) {
+        if (d._id == acceptDancer._id) {
+          ind2 = sortedDancers.indexOf(d);
+          break;
+        }
+      }
+      if (ind2 !== -1) {
+        setSortedDancers([... sortedDancers.slice(0, ind2), dancer, ...sortedDancers.slice(ind2+1)]);
+      }
       setMakingChanges(false);
     });
   }

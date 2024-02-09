@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./NavBar.css";
-import { Link } from "@reach/router";
-import GoogleLogin, { GoogleLogout } from "react-google-login";
+import { Link } from "react-router-dom";
+import { GoogleOAuthProvider, GoogleLogin, googleLogout } from "@react-oauth/google";
 
 
 const GOOGLE_CLIENT_ID = "7112847294-5v026crn1ac038njg41v8a4e6obaeaae.apps.googleusercontent.com";
@@ -60,26 +60,24 @@ function NavBar(props) {
                   <button onClick={switchDance}>switch</button>
               </div>
               : null}
-              <div>
-              <GoogleLogout
-                  clientId={GOOGLE_CLIENT_ID}
-                  buttonText="Logout"
-                  onLogoutSuccess={handleLogout}
-                  onFailure={(err) => console.log(err)}
-                  className="NavBar-link NavBar-login"
-              />
-              </div>
             </div>
-        </>
-        :
-            <GoogleLogin
-              clientId={GOOGLE_CLIENT_ID}
-              buttonText="Login"
-              onSuccess={handleLogin}
-              onFailure={(err) => console.log(err)}
-              className="NavBar-link NavBar-login"
-            />
-    }
+        </> : null }
+        <div className="NavBar-link NavBar-login">
+          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+            {googleId ? (
+              <button
+                onClick={() => {
+                  googleLogout();
+                  handleLogout();
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <GoogleLogin onSuccess={handleLogin} onError={(err) => console.log(err)} />
+            )}
+          </GoogleOAuthProvider>
+        </div>
     </div>
   );
 }

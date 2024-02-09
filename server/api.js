@@ -232,7 +232,7 @@ router.post("/notTaking", auth.ensureLoggedIn, async (req, res) => {
       { $set: {rejectedDances: [req.body.danceName]}},
       { new: true}
     )
-    await socketManager.getIo().emit("notTakingDancerForDance", {name: req.body.choreogName, rejDancer: dancer, danceName: req.body.danceName});
+    await socketManager.getIo().emit("notTakingDancerForDance", {name: req.body.choreogName, rejDancer: updatedDancer, danceName: req.body.danceName});
     res.send(updatedDancer);
   }
 })
@@ -260,7 +260,7 @@ router.post("/mightTake", auth.ensureLoggedIn, async (req, res) => {
       { new: true}
     );
     console.log("updated dancer: " + updatedDancer);
-    await socketManager.getIo().emit("considerDancerForDance", {name: req.body.choreogName, accDancer: dancer, danceName: req.body.danceName});
+    await socketManager.getIo().emit("considerDancerForDance", {name: req.body.choreogName, accDancer: updatedDancer, danceName: req.body.danceName});
     res.send(updatedDancer);
   }
   else {

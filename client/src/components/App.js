@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Router, Location } from "@reach/router";
+import { Routes, Route } from "react-router-dom";
 import { get, post } from "../utilities.js";
 import NotFound from "./pages/NotFound.js";
 import NavBar from "./modules/NavBar.js";
@@ -318,6 +318,7 @@ function App() {
   useEffect(() => {
     socket.once("notTakingDancerForDance", (data) => {
       if (data.name !== name) {
+        console.log(data.name + " not taking")
         let ind = -1;
         for (let i = 0; i < sortedDancers.length; i++) {
           if (sortedDancers[i]._id == data.rejDancer._id) {
@@ -341,6 +342,7 @@ function App() {
   useEffect(() => {
     socket.once("considerDancerForDance", (data) => {
       if (data.name !== name) {
+        console.log(data.name + " might consider")
         let ind = -1;
         for (let i = 0; i < sortedDancers.length; i++) {
           if (sortedDancers[i]._id == data.accDancer._id) {
@@ -572,47 +574,76 @@ function App() {
       <div className="appContainer">
         {googleId ? (
           <>
-            <Router>
+            <Routes>
             {sortedDancers ? 
-            <FullRoster 
+            <Route
               path="/"
-              allDancers={sortedDancers}
-              displayedDancer={displayedDancer}
-              displayedPrefs={displayedPrefs}
-              // rejectedDanceMap={rejectedDanceMap}
-              toggleModal={toggleModal}
+              element={
+                <FullRoster 
+                  path="/"
+                  allDancers={sortedDancers}
+                  displayedDancer={displayedDancer}
+                  displayedPrefs={displayedPrefs}
+                  // rejectedDanceMap={rejectedDanceMap}
+                  toggleModal={toggleModal}
+                />
+              }
             /> : null}
             { rosteredList && dancerList && myDanceName && myDanceIndex ? 
-            <Dance path="/dance"
-              rosteredList={rosteredList}
-              dancerList={dancerList}
-              // rejectedDanceMap={rejectedDanceMap}
-              notTaking={notTaking}
-              mightTake={mightTake}
-              myDanceName={myDanceName}
-              myDanceIndex={myDanceIndex}
-              displayedDancer={displayedDancer}
-              displayedPrefs={displayedPrefs}
-              toggleModal={toggleModal}
-              addToDance={addToDance}
-              removeFromDance={removeFromDance}
-              makingChanges={makingChanges}
-              />
-            : null} 
-            <AllDances path="/allDances" allDances={allDances}/>
-            <Scheduling path="/scheduling" 
-              choreogName={name} 
-              danceName={myDanceName} 
-              timeslots={timeslots} 
-              conflicts={finalConflicts} 
-              displayedConflicts={displayedConflicts}
-              toggleConflict={toggleConflict}
-              conflictOpen={conflictOpen}
-              makingChanges={makingChanges} 
-              />
-            <Admin path="/admin" />
-            <NotFound default />
-            </Router>
+            <Route
+              path="/dance"
+              element={
+                <Dance path="/dance"
+                  rosteredList={rosteredList}
+                  dancerList={dancerList}
+                  // rejectedDanceMap={rejectedDanceMap}
+                  notTaking={notTaking}
+                  mightTake={mightTake}
+                  myDanceName={myDanceName}
+                  myDanceIndex={myDanceIndex}
+                  displayedDancer={displayedDancer}
+                  displayedPrefs={displayedPrefs}
+                  toggleModal={toggleModal}
+                  addToDance={addToDance}
+                  removeFromDance={removeFromDance}
+                  makingChanges={makingChanges}
+                />
+              }
+            /> : null} 
+            <Route
+              path="/allDances"
+              element={
+                <AllDances path="/allDances" allDances={allDances}/>
+              }
+            />
+            <Route
+              path="/scheduling"
+              element={
+                <Scheduling path="/scheduling" 
+                choreogName={name} 
+                danceName={myDanceName} 
+                timeslots={timeslots} 
+                conflicts={finalConflicts} 
+                displayedConflicts={displayedConflicts}
+                toggleConflict={toggleConflict}
+                conflictOpen={conflictOpen}
+                makingChanges={makingChanges} 
+                />
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <Admin path="/admin" />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <NotFound default />
+              }
+            />
+            </Routes>
             <OnRouteChange action={() => { window.scrollTo(0, 0)}} />
 
             {!sortedDancers ? 

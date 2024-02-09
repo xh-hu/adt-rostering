@@ -16,7 +16,7 @@ const net = require("net");
 class NodeSetupError extends Error {}
 let routeChecked = false;
 
-// poke port 5000 to see if 'npm run hotloader' was possibly called
+// poke port 5050 to see if 'npm run hotloader' was possibly called
 function checkHotLoader() {
   return new Promise((resolve, reject) => {
     var server = net.createServer();
@@ -27,7 +27,7 @@ function checkHotLoader() {
 
     server.once("listening", () => server.close());
     server.once("close", () => resolve(false));
-    server.listen(5000);
+    server.listen(5050);
   });
 }
 
@@ -42,7 +42,7 @@ module.exports = {
 
   checkRoutes: (req, res, next) => {
     if (!routeChecked && req.url === "/") {
-      // if the server receives a request on /, we must be on port 3000 not 5000
+      // if the server receives a request on /, we must be on port 3000 not 5050
       if (!fs.existsSync("./client/dist/bundle.js")) {
         throw new NodeSetupError(
           "Couldn't find bundle.js! If you want to run the hot reloader, make sure 'npm run hotloader'\n" +
